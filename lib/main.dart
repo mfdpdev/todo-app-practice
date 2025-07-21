@@ -40,7 +40,8 @@ class _PageState extends State<Page> {
             _selectedIndex = index;
           });
         },
-        // backgroundColor: Colors.blue,
+        backgroundColor: Color(0xFFFAFAFA),
+        selectedItemColor: Colors.black,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Padding(

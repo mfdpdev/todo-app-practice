@@ -1,4 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:timezone/data/latest.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 void main() {
   runApp(const MyApp());
@@ -70,11 +74,57 @@ class _PageState extends State<Page> {
   }
 }
 
-class Page1 extends StatelessWidget {
+class Page1 extends StatefulWidget {
   const Page1({super.key});
 
   @override
+  State<Page1> createState() => _Page1State();
+}
+
+class _Page1State extends State<Page1> {
+
+  late Timer _timer;
+
+  late String dayName;
+  late String hourMinute;
+  late String monthShort;
+  late String indonesiaTime;
+  late String internationalTime;
+
+  void initState(){
+    super.initState();
+    initializeTimeZones();
+    _updateTime();
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer){
+      _updateTime();
+    });
+  }
+
+  void _updateTime(){
+    final jakarta = tz.getLocation('Asia/Jakarta');
+
+    final nowJakarta = tz.TZDateTime.now(jakarta);
+    final nowUtc = DateTime.now().toUtc();
+
+    setState(() {
+      dayName = DateFormat('EEEE').format(nowJakarta);
+      hourMinute = DateFormat('HH.mm').format(nowJakarta);
+      monthShort = DateFormat('MMM').format(nowJakarta).toUpperCase();
+      indonesiaTime = DateFormat('hh:mm a').format(nowJakarta);
+      internationalTime = DateFormat('hh:mm a').format(nowUtc);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context){
+
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(top: 0.0),
@@ -95,7 +145,7 @@ class Page1 extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 8.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: const Text('Sunday',
+                        child: Text(dayName,
                           style: TextStyle(
                             fontSize: 20,
                           )
@@ -112,13 +162,13 @@ class Page1 extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                const Text('22.30', 
+                                Text(hourMinute, 
                                   style: TextStyle(
                                     fontSize: 42,
                                     fontWeight: FontWeight.bold,
                                   )
                                 ),
-                                const Text('DEC',
+                                Text(monthShort,
                                   style: TextStyle(
                                     fontSize: 42,
                                     fontWeight: FontWeight.bold,
@@ -135,29 +185,29 @@ class Page1 extends StatelessWidget {
                           ),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    const Text('1:20 PM', 
+                                    Text(indonesiaTime, 
                                       style: TextStyle(
                                         fontSize: 20,
                                       )
                                     ),
-                                    const Text('New York'),
+                                    const Text('Indonesia'),
                                   ]
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    const Text('6:20 PM', 
+                                    Text(internationalTime, 
                                       style: TextStyle(
                                         fontSize: 20,
                                       )
                                     ),
-                                    const Text('UK'),
+                                    const Text('UTC Time'),
                                   ]
                                 ),
                               ]

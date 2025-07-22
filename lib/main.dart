@@ -143,13 +143,33 @@ class _Page1State extends State<Page1> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(dayName,
-                          style: TextStyle(
-                            fontSize: 20,
+                      child: Row(
+                        // alignment: Alignment.centerLeft,
+                        children: <Widget>[
+                          Text(
+                            dayName,
+                            style: TextStyle(
+                              fontSize: 20,
+                            )
+                          ),
+                          PopupMenuButton<int>(
+                            icon: Icon(Icons.more_vert),
+                            onSelected: (int value) {
+
+                            },
+                            itemBuilder: (BuildContext context) => [
+                              PopupMenuItem<int>(
+                                value: 0,
+                                child: Text("Option 1"),
+                              ),
+                              PopupMenuItem<int>(
+                                value: 1,
+                                child: Text("Option 2"),
+                              ),
+                            ],
                           )
-                        )
+                        ],
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       ),
                     ),
                     Container(

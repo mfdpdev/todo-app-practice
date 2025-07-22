@@ -222,9 +222,7 @@ class _Page1State extends State<Page1> {
               Expanded(
                 child: Container(
                   color: Colors.white,
-                  child: Center(
-                    child: const Text('Hello, World!')
-                  )
+                  child: Tasks()
                 )
               )
             ]
@@ -253,6 +251,51 @@ class Page0 extends StatelessWidget {
   Widget build(BuildContext context){
     return Center(
       child: const Text('Checklist Coming Soon!')
+    );
+  }
+}
+
+class Tasks extends StatefulWidget {
+  const Tasks({super.key});
+
+  @override
+  State<Tasks> createState() => _TasksState();
+}
+
+class _TasksState extends State<Tasks> {
+
+  final List<String> data = <String>['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+  @override
+  Widget build(BuildContext context){
+    return ListView.builder(
+      padding: const EdgeInsets.all(0),
+      itemCount: data.length,
+      itemBuilder: (BuildContext context, int index) {
+        final task = data[index];
+
+        return Padding(
+          padding: EdgeInsets.all(4.0),
+          child: Container(
+            height: 60,
+            color: Color(0xFFFAFAFA),
+            child: ListTile(
+              title: Text(task),
+              leading: Checkbox(
+                value: true,
+                onChanged: (bool? newValue) {
+                  // setState(() {
+                  //   task.isChecked = newValue!;
+                  // });
+                },
+                activeColor: Colors.grey,  // Warna ketika checked
+                checkColor: Colors.white,  // Warna icon check saat checked
+                side: BorderSide(color: Colors.grey, width: 2),  // Warna border saat unchecked
+              ),
+            ) 
+          )
+        );
+      }
     );
   }
 }

@@ -33,6 +33,101 @@ class Page extends StatelessWidget {
       ), 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          showModalBottomSheet(
+            isScrollControlled: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16), // Sudut melengkung
+            ),
+            context: context,
+            builder: (context) => Container(
+              // height: 200,
+              // shape: RoundedRectangleBorder,
+              color: Colors.white,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        cursorColor: Colors.black,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Todo',
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                          ),
+                          // hintText: 'Masukkan sesuatu...',
+                          // hintStyle: TextStyle(
+                          //   color: Colors.grey.shade500, // Warna hint text
+                          // ),
+                          // fillColor: Colors.blue.shade50, // Background warna
+                          // filled: true,  // Mengaktifkan fillColor
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black, // Warna border saat difokuskan
+                              width: 2,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black, // Warna border saat tidak difokuskan
+                              width: 2,
+                            ),
+                          ),
+                        )
+                      )
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () async {
+                        var pickedDate = await showDatePicker(
+                          context: context,
+                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2019),
+                          lastDate: DateTime(2050),
+                        );
+
+                        // setState(() {
+                        //   selectedDate = pickedDate;
+                        // });
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () async {
+                        var pickedTime = await showTimePicker(
+                          context: context,
+                          initialEntryMode: TimePickerEntryMode.dial,
+                          initialTime: TimeOfDay.now(),
+                        );
+
+                        // setState(() {
+                        //   selectedDate = pickedDate;
+                        // });
+                      },
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),  // Sudut rounded
+                        ),
+                        // padding: EdgeInsets.all(30),  // Padding di dalam tombol
+                      ),
+                      child: Icon(
+                        Icons.add,  // Ikon yang ditampilkan
+                        color: Colors.white,  // Warna ikon
+                        size: 20,  // Ukuran ikon
+                      ),
+                    )
+                  ]
+                )
+              )
+            )
+          );
         },
         foregroundColor: Colors.white,
         backgroundColor: Colors.black,

@@ -19,57 +19,27 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Page extends StatefulWidget {
-  @override
-  _PageState createState() => _PageState();
-}
-
-class _PageState extends State<Page> {
-  int _selectedIndex = 1;
-
-  final List<Widget> _page = <Widget>[
-    Page0(),
-    Page1(),
-    Page2(),
-  ];
+class Page extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      body: _page[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
+      body: Page1(),
+      bottomNavigationBar: BottomAppBar(
+        height: 60,
+        shape: CircularNotchedRectangle(), // Biar ada notch (takik) buat FAB
+        // color: Color(0xFFFAFAFA),
+        color: Colors.black,
+      ), 
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
         },
-        backgroundColor: Color(0xFFFAFAFA),
-        selectedItemColor: Colors.black,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(top: 16.0), // Padding pada icon
-              child: Icon(Icons.check_box),
-            ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(top: 16.0), // Padding pada icon
-              child: Icon(Icons.add),
-            ),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(top: 16.0), // Padding pada icon
-              child: Icon(Icons.settings),
-            ),
-            label: '',
-          ),
-        ]
-      )
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.black,
+        shape: CircleBorder(),
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
@@ -154,6 +124,7 @@ class _Page1State extends State<Page1> {
                           ),
                           PopupMenuButton<int>(
                             icon: Icon(Icons.more_vert),
+                            color: Color(0xFFFAFAFA),
                             onSelected: (int value) {
 
                             },
@@ -304,11 +275,8 @@ class _TasksState extends State<Tasks> {
               leading: Checkbox(
                 value: true,
                 onChanged: (bool? newValue) {
-                  // setState(() {
-                  //   task.isChecked = newValue!;
-                  // });
                 },
-                activeColor: Colors.grey,  // Warna ketika checked
+                activeColor: Colors.black,  // Warna ketika checked
                 checkColor: Colors.white,  // Warna icon check saat checked
                 side: BorderSide(color: Colors.grey, width: 2),  // Warna border saat unchecked
               ),

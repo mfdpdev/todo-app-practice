@@ -34,7 +34,7 @@ class Page extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
-            isScrollControlled: true,
+            // isScrollControlled: true,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16), // Sudut melengkung
             ),
@@ -107,21 +107,18 @@ class Page extends StatelessWidget {
                         // });
                       },
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),  // Sudut rounded
-                        ),
-                        // padding: EdgeInsets.all(30),  // Padding di dalam tombol
-                      ),
-                      child: Icon(
-                        Icons.add,  // Ikon yang ditampilkan
-                        color: Colors.white,  // Warna ikon
-                        size: 20,  // Ukuran ikon
-                      ),
+                    Material(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8.0),
+                        onTap: () => {
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(Icons.add, color: Colors.white)
+                        )
+                      )
                     )
                   ]
                 )
@@ -202,7 +199,7 @@ class _Page1State extends State<Page1> {
                   left: 26.0,
                   right: 26.0,
                   top: 18.0,
-                  bottom: 18.0,
+                  bottom: 0.0,
                 ),
                 child: Column(
                   children: <Widget>[
@@ -305,6 +302,10 @@ class _Page1State extends State<Page1> {
                   ]
                 )
               ),
+              Container(
+                height: 140,
+                child: WeeklyCalendar(),
+              ),
               Expanded(
                 child: Container(
                   color: Colors.white,
@@ -382,3 +383,181 @@ class _TasksState extends State<Tasks> {
     );
   }
 }
+
+
+class WeeklyCalendar extends StatefulWidget {
+  @override
+  _WeeklyCalendarState createState() => _WeeklyCalendarState();
+}
+
+class _WeeklyCalendarState extends State<WeeklyCalendar> {
+  PageController _pageController = PageController(initialPage: 1000);
+  int _currentPage = 1000;
+
+  DateTime selectedDate = DateTime.now();
+
+  DateTime getWeekStart(int weekOffset) {
+    final now = DateTime.now();
+    final weekday = now.weekday;
+    final monday = now.subtract(Duration(days: weekday - 1));
+    return monday.add(Duration(days: 7 * weekOffset));
+  }
+
+  DateTime getMonthStart(int monthOffset){
+    DateTime now = DateTime.now();
+    return DateTime(now.year, now.month + monthOffset, 1);
+  }
+
+  void _onDateSelected(DateTime date){
+    setState((){
+      selectedDate = date;
+    });
+  }
+
+  List<DateTime> getWeekDates(DateTime startOfWeek) {
+    return List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    DateTime startOfWeek = getWeekStart(_currentPage - 1000);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 5,
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+          child: Text(
+            DateFormat('MMM yyyy').format(startOfWeek),
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 5,
+        ),
+        SizedBox(
+          height: 80,
+          // width: double.infinity,
+          child: PageView.builder(
+            controller: _pageController,
+            onPageChanged: (int index) {
+              setState(() {
+                _currentPage = index;
+              });
+            },
+            itemBuilder: (context, index) {
+              final weekStart = getWeekStart(index - 1000);
+              final weekDates = getWeekDates(weekStart);
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: weekDates.map((date) {
+                  final isToday = _isSameDate(date, DateTime.now());
+                  final isSelected = _isSameDate(date, selectedDate);
+
+                  return GestureDetector(
+                    onTap: () {
+                      _onDateSelected(date);
+                    },
+                    child: Column(
+                      children: [
+                        Text(
+                          DateFormat('E').format(date).substring(0, 1),
+                          style: TextStyle(
+                            color: Colors.grey,
+                          )
+                        ),
+                        SizedBox(height: 4),
+                        Container(
+                          height: 40,
+                          width: 40,
+                          padding: EdgeInsets.all(4.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            color: isToday ? Colors.black : Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                            )
+                          ),
+                          child: Center(
+                            child: Text(
+                              date.day.toString(),
+                              style: TextStyle(
+                                color: isToday ? Colors.white : Colors.black,
+                              )
+                            )
+                          )
+                        )
+                      ]
+                    )
+                  );
+                }).toList(),
+              );
+            }
+          ) 
+        ),
+        Container(
+          height: 1,               // lebar garis
+          width: double.infinity,             // tinggi garis
+          color: Colors.grey,     // warna garis
+          margin: EdgeInsets.symmetric(horizontal: 8),
+        ),
+      ]
+    );
+  }
+
+  bool _isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+}
+
+
+              // SingleChildScrollView(
+              //   scrollDirection: Axis.horizontal,
+              //   child: Row(
+              //     children: List.generate(31, (dayIndex) {
+              //       DateTime date = DateTime(startOfMonth.year, startOfMonth.month, dayIndex + 1);
+              //       return Padding(
+              //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              //         child: GestureDetector(
+              //           onTap: () {
+              //             _onDateSelected(date);
+              //           },
+              //           child: Column(
+              //             children: [
+              //               Text(
+              //                 DateFormat('E').format(date),
+              //               ),
+              //               SizedBox(height: 4),
+              //               Container(
+              //                 padding: EdgeInsets.all(10.0),
+              //                 decoration: BoxDecoration(
+              //                   shape: BoxShape.circle,
+              //                   color: Colors.black,
+              //                   border: Border.all(
+              //                     color: Colors.black,
+              //                     width: 2,
+              //                   )
+              //                 ),
+              //                 child: Text(
+              //                   date.day.toString(),
+              //                   style: TextStyle(
+              //                     color: Colors.white,
+              //                   )
+              //                 )
+              //               )
+              //             ]
+              //           )
+              //         )
+              //       );
+              //     })
+              //   )
+              // )

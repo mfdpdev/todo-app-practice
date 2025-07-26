@@ -35,90 +35,109 @@ class Page extends StatelessWidget {
         onPressed: () {
           showModalBottomSheet(
             // isScrollControlled: true,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16), // Sudut melengkung
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(15.0),
+              ), // Sudut melengkung
             ),
             context: context,
             builder: (context) => Container(
               // height: 200,
               // shape: RoundedRectangleBorder,
-              color: Colors.white,
+              decoration: BoxDecoration(
+                color: Colors.white, // Pindahkan warna ke sini
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(15.0), // Tambahkan borderRadius di sini juga
+                ),
+              ),
               child: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: TextField(
-                        cursorColor: Colors.black,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Todo',
-                          labelStyle: TextStyle(
-                            color: Colors.black,
-                          ),
-                          // hintText: 'Masukkan sesuatu...',
-                          // hintStyle: TextStyle(
-                          //   color: Colors.grey.shade500, // Warna hint text
-                          // ),
-                          // fillColor: Colors.blue.shade50, // Background warna
-                          // filled: true,  // Mengaktifkan fillColor
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black, // Warna border saat difokuskan
-                              width: 2,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black, // Warna border saat tidak difokuskan
-                              width: 2,
-                            ),
-                          ),
-                        )
-                      )
+                    TextField(
+                      cursorColor: Colors.black,
+                      decoration: const InputDecoration(
+                        // border: OutlineInputBorder(),
+                        // labelText: 'Todo',
+                        // labelStyle: TextStyle(
+                        //   color: Colors.black,
+                        // ),
+                        // hintText: 'Masukkan sesuatu...',
+                        // hintStyle: TextStyle(
+                        //   color: Colors.grey.shade500, // Warna hint text
+                        // ),
+                        // fillColor: Colors.blue.shade50, // Background warna
+                        // filled: true,  // Mengaktifkan fillColor
+                        // focusedBorder: OutlineInputBorder(
+                        //   borderSide: BorderSide(
+                        //     color: Colors.black, // Warna border saat difokuskan
+                        //     width: 2,
+                        //   ),
+                        // ),
+                        // enabledBorder: OutlineInputBorder(
+                        //   borderSide: BorderSide(
+                        //     color: Colors.black, // Warna border saat tidak difokuskan
+                        //     width: 2,
+                        //   ),
+                        // ),
+                        border: InputBorder.none,
+                        hintText: 'Enter your task here ...',
+                      ),
+                      autofocus: true,
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () async {
-                        var pickedDate = await showDatePicker(
-                          context: context,
-                          initialEntryMode: DatePickerEntryMode.calendarOnly,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2019),
-                          lastDate: DateTime(2050),
-                        );
+                    // SizedBox(height: 8),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () async {
+                            final pickedDate = await showDatePicker(
+                              context: context,
+                              initialEntryMode: DatePickerEntryMode.calendarOnly,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2019),
+                              lastDate: DateTime(2050),
+                            );
 
-                        // setState(() {
-                        //   selectedDate = pickedDate;
-                        // });
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () async {
-                        var pickedTime = await showTimePicker(
-                          context: context,
-                          initialEntryMode: TimePickerEntryMode.dial,
-                          initialTime: TimeOfDay.now(),
-                        );
+                            // setState(() {
+                            //   selectedDate = pickedDate;
+                            // });
 
-                        // setState(() {
-                        //   selectedDate = pickedDate;
-                        // });
-                      },
-                    ),
-                    Material(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8.0),
-                        onTap: () => {
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(Icons.add, color: Colors.white)
-                        )
-                      )
+                          },
+                          color: Colors.grey,
+                        ),
+                        SizedBox(width: 4.0),
+                        IconButton(
+                          icon: const Icon(Icons.access_time_sharp),
+                          onPressed: () async {
+                            var pickedTime = await showTimePicker(
+                              context: context,
+                              initialEntryMode: TimePickerEntryMode.dial,
+                              initialTime: TimeOfDay.now(),
+                            );
+
+                            // setState(() {
+                            //   selectedDate = pickedDate;
+                            // });
+                          },
+                          color: Colors.grey,
+                        ),
+                        Spacer(),
+                        Material(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(8.0),
+                            onTap: () => {
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(Icons.add, color: Colors.white)
+                            )
+                          )
+                        ) 
+                      ]
                     )
                   ]
                 )
@@ -170,8 +189,8 @@ class _Page1State extends State<Page1> {
     final nowUtc = DateTime.now().toUtc();
 
     setState(() {
-      dayName = DateFormat('EEEE').format(nowJakarta);
-      hourMinute = DateFormat('HH.mm').format(nowJakarta);
+      dayName = DateFormat('EEEE, d').format(nowJakarta);
+      hourMinute = DateFormat('HH:mm').format(nowJakarta);
       monthShort = DateFormat('MMM').format(nowJakarta).toUpperCase();
       indonesiaTime = DateFormat('hh:mm a').format(nowJakarta);
       internationalTime = DateFormat('hh:mm a').format(nowUtc);
@@ -360,9 +379,51 @@ class Tasks extends StatefulWidget {
 class _TasksState extends State<Tasks> {
 
   final List<String> data = <String>['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  final List<Task> _tasks = [];
+  final TextEditingController _textFieldController = TextEditingController();
+
+
+  // void _addTask(String task, {DateTime? scheduleAt: }){
+  void _addTask(String task){
+    if(task.isNotEmpty){
+      _tasks.add(Task(task: task, scheduleAt: DateTime.now()));
+    }
+
+    _textFieldController.clear();
+  }
+
+  void _removeTask(int index){
+    setState((){
+      _tasks.removeAt(index);
+    });
+  }
+
+  void _toogleTaskStatus(int index){
+    setState((){
+      _tasks[index].isDone = !_tasks[index].isDone;
+    });
+  }
 
   @override
   Widget build(BuildContext context){
+    
+    if(_tasks.isEmpty){
+      return Center(
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text("You don't have any tasks yet", style: TextStyle(
+              fontSize: 18,
+            )),
+            const Text("Start creating recourses by clicking on add icon", style: TextStyle(
+              fontSize: 10,
+            )),
+          ]
+        )
+      );
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
       itemCount: data.length,
@@ -416,11 +477,6 @@ class _WeeklyCalendarState extends State<WeeklyCalendar> {
     return monday.add(Duration(days: 7 * weekOffset));
   }
 
-  DateTime getMonthStart(int monthOffset){
-    DateTime now = DateTime.now();
-    return DateTime(now.year, now.month + monthOffset, 1);
-  }
-
   void _onDateSelected(DateTime date){
     setState((){
       selectedDate = date;
@@ -433,9 +489,6 @@ class _WeeklyCalendarState extends State<WeeklyCalendar> {
 
   @override
   Widget build(BuildContext context) {
-
-    DateTime startOfWeek = getWeekStart(_currentPage - 1000);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -446,7 +499,7 @@ class _WeeklyCalendarState extends State<WeeklyCalendar> {
         Padding(
           padding: EdgeInsets.only(left: 16.0, right: 16.0),
           child: Text(
-            DateFormat('MMM yyyy').format(startOfWeek),
+            DateFormat('MMM yyyy').format(selectedDate),
             style: TextStyle(
               fontSize: 18,
             ),
@@ -476,6 +529,7 @@ class _WeeklyCalendarState extends State<WeeklyCalendar> {
 
                   return GestureDetector(
                     onTap: () {
+                      print(date);
                       _onDateSelected(date);
                     },
                     child: Column(
@@ -493,7 +547,7 @@ class _WeeklyCalendarState extends State<WeeklyCalendar> {
                           padding: EdgeInsets.all(4.0),
                           decoration: BoxDecoration(
                             shape: BoxShape.rectangle,
-                            color: isToday ? Colors.black : Colors.white,
+                            color: isSelected ? Colors.black : Colors.white,
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
                               color: Colors.black,
@@ -504,7 +558,7 @@ class _WeeklyCalendarState extends State<WeeklyCalendar> {
                             child: Text(
                               date.day.toString(),
                               style: TextStyle(
-                                color: isToday ? Colors.white : Colors.black,
+                                color: isSelected ? Colors.white : Colors.black,
                               )
                             )
                           )

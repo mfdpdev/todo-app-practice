@@ -342,6 +342,14 @@ class Page0 extends StatelessWidget {
   }
 }
 
+class Task {
+  String task;
+  bool isDone;
+  DateTime? scheduleAt;
+
+  Task({required this.task, this.isDone = false, this.scheduleAt});
+}
+
 class Tasks extends StatefulWidget {
   const Tasks({super.key});
 
@@ -356,27 +364,32 @@ class _TasksState extends State<Tasks> {
   @override
   Widget build(BuildContext context){
     return ListView.builder(
-      padding: const EdgeInsets.all(0),
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
       itemCount: data.length,
       itemBuilder: (BuildContext context, int index) {
         final task = data[index];
 
         return Padding(
-          padding: EdgeInsets.all(4.0),
-          child: Container(
-            height: 60,
-            color: Color(0xFFFAFAFA),
-            child: ListTile(
-              title: Text(task),
-              leading: Checkbox(
-                value: true,
-                onChanged: (bool? newValue) {
-                },
-                activeColor: Colors.black,  // Warna ketika checked
-                checkColor: Colors.white,  // Warna icon check saat checked
-                side: BorderSide(color: Colors.grey, width: 2),  // Warna border saat unchecked
-              ),
-            ) 
+          padding: EdgeInsets.all(6.0),
+          child: Material(
+            color: Colors.black,
+            elevation: 1,
+            child: Container(
+              height: 60,
+              // color: Color(0xFFFAFAFA),
+              color: Colors.white,
+              child: ListTile(
+                title: Text(task),
+                leading: Checkbox(
+                  value: true,
+                  onChanged: (bool? newValue) {
+                  },
+                  activeColor: Colors.black,  // Warna ketika checked
+                  checkColor: Colors.white,  // Warna icon check saat checked
+                  side: BorderSide(color: Colors.grey, width: 2),  // Warna border saat unchecked
+                ),
+              ) 
+            )
           )
         );
       }

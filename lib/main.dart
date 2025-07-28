@@ -14,155 +14,203 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return MaterialApp(
-      home: Page(),
+      home: Main(),
     );
   }
 }
 
-class Page extends StatelessWidget {
+class Main extends StatefulWidget {
+  const Main({super.key});
 
   @override
-  Widget build(BuildContext context){
+  State<Main> createState() => _MainState();
+}
+
+class _MainState extends State<Main> {
+
+  // final List<String> data = <String>['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  final List<Task> tasks = [];
+  // final TextEditingController _textFieldController = TextEditingController();
+
+  // void _addTask(String task, {DateTime? scheduleAt: }){
+  void addTask(String task){
+    if(task.isNotEmpty){
+      tasks.add(Task(task: task, scheduleAt: DateTime.now()));
+    }
+
+    // textFieldController.clear();
+  }
+
+  void removeTask(int index){
+    setState((){
+      tasks.removeAt(index);
+    });
+  }
+
+  void toogleTaskStatus(int index){
+    setState((){
+      tasks[index].isDone = !tasks[index].isDone;
+    });
+  }
+  
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: Page1(),
+      body: Wrapper(
+        tasks: this.tasks,
+        addTask: this.addTask,
+        removeTask: this.removeTask,
+        toogleTaskStatus: this.toogleTaskStatus,
+      ),
       bottomNavigationBar: BottomAppBar(
         height: 60,
         shape: CircularNotchedRectangle(), // Biar ada notch (takik) buat FAB
         // color: Color(0xFFFAFAFA),
         color: Colors.black,
       ), 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            // isScrollControlled: true,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(15.0),
-              ), // Sudut melengkung
-            ),
-            context: context,
-            builder: (context) => Container(
-              // height: 200,
-              // shape: RoundedRectangleBorder,
-              decoration: BoxDecoration(
-                color: Colors.white, // Pindahkan warna ke sini
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(15.0), // Tambahkan borderRadius di sini juga
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      cursorColor: Colors.black,
-                      decoration: const InputDecoration(
-                        // border: OutlineInputBorder(),
-                        // labelText: 'Todo',
-                        // labelStyle: TextStyle(
-                        //   color: Colors.black,
-                        // ),
-                        // hintText: 'Masukkan sesuatu...',
-                        // hintStyle: TextStyle(
-                        //   color: Colors.grey.shade500, // Warna hint text
-                        // ),
-                        // fillColor: Colors.blue.shade50, // Background warna
-                        // filled: true,  // Mengaktifkan fillColor
-                        // focusedBorder: OutlineInputBorder(
-                        //   borderSide: BorderSide(
-                        //     color: Colors.black, // Warna border saat difokuskan
-                        //     width: 2,
-                        //   ),
-                        // ),
-                        // enabledBorder: OutlineInputBorder(
-                        //   borderSide: BorderSide(
-                        //     color: Colors.black, // Warna border saat tidak difokuskan
-                        //     width: 2,
-                        //   ),
-                        // ),
-                        border: InputBorder.none,
-                        hintText: 'Enter your task here ...',
-                      ),
-                      autofocus: true,
-                    ),
-                    // SizedBox(height: 8),
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: () async {
-                            final pickedDate = await showDatePicker(
-                              context: context,
-                              initialEntryMode: DatePickerEntryMode.calendarOnly,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2019),
-                              lastDate: DateTime(2050),
-                            );
-
-                            // setState(() {
-                            //   selectedDate = pickedDate;
-                            // });
-
-                          },
-                          color: Colors.grey,
-                        ),
-                        SizedBox(width: 4.0),
-                        IconButton(
-                          icon: const Icon(Icons.access_time_sharp),
-                          onPressed: () async {
-                            var pickedTime = await showTimePicker(
-                              context: context,
-                              initialEntryMode: TimePickerEntryMode.dial,
-                              initialTime: TimeOfDay.now(),
-                            );
-
-                            // setState(() {
-                            //   selectedDate = pickedDate;
-                            // });
-                          },
-                          color: Colors.grey,
-                        ),
-                        Spacer(),
-                        Material(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(8.0),
-                            onTap: () => {
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(Icons.add, color: Colors.white)
-                            )
-                          )
-                        ) 
-                      ]
-                    )
-                  ]
-                )
-              )
-            )
-          );
-        },
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.black,
-        shape: CircleBorder(),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: FloatingButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
 
-class Page1 extends StatefulWidget {
-  const Page1({super.key});
+class FloatingButton extends StatelessWidget {
+
+  const FloatingButton({super.key});
 
   @override
-  State<Page1> createState() => _Page1State();
+  Widget build(BuildContext context){
+    return FloatingActionButton(
+      onPressed: () {
+        showModalBottomSheet(
+          // isScrollControlled: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(15.0),
+            ), // Sudut melengkung
+          ),
+          context: context,
+          builder: (context) => Container(
+            // height: 200,
+            // shape: RoundedRectangleBorder,
+            decoration: BoxDecoration(
+              color: Colors.white, // Pindahkan warna ke sini
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(15.0), // Tambahkan borderRadius di sini juga
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    cursorColor: Colors.black,
+                    decoration: const InputDecoration(
+                      // border: OutlineInputBorder(),
+                      // labelText: 'Todo',
+                      // labelStyle: TextStyle(
+                      //   color: Colors.black,
+                      // ),
+                      // hintText: 'Masukkan sesuatu...',
+                      // hintStyle: TextStyle(
+                      //   color: Colors.grey.shade500, // Warna hint text
+                      // ),
+                      // fillColor: Colors.blue.shade50, // Background warna
+                      // filled: true,  // Mengaktifkan fillColor
+                      // focusedBorder: OutlineInputBorder(
+                      //   borderSide: BorderSide(
+                      //     color: Colors.black, // Warna border saat difokuskan
+                      //     width: 2,
+                      //   ),
+                      // ),
+                      // enabledBorder: OutlineInputBorder(
+                      //   borderSide: BorderSide(
+                      //     color: Colors.black, // Warna border saat tidak difokuskan
+                      //     width: 2,
+                      //   ),
+                      // ),
+                      border: InputBorder.none,
+                      hintText: 'Enter your task here ...',
+                    ),
+                    autofocus: true,
+                  ),
+                  // SizedBox(height: 8),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () async {
+                          final pickedDate = await showDatePicker(
+                            context: context,
+                            initialEntryMode: DatePickerEntryMode.calendarOnly,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2019),
+                            lastDate: DateTime(2050),
+                          );
+
+                          // setState(() {
+                          //   selectedDate = pickedDate;
+                          // });
+
+                        },
+                        color: Colors.grey,
+                      ),
+                      SizedBox(width: 4.0),
+                      IconButton(
+                        icon: const Icon(Icons.access_time_sharp),
+                        onPressed: () async {
+                          var pickedTime = await showTimePicker(
+                            context: context,
+                            initialEntryMode: TimePickerEntryMode.dial,
+                            initialTime: TimeOfDay.now(),
+                          );
+
+                          // setState(() {
+                          //   selectedDate = pickedDate;
+                          // });
+                        },
+                        color: Colors.grey,
+                      ),
+                      Spacer(),
+                      Material(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8.0),
+                          onTap: () => {
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(Icons.add, color: Colors.white)
+                          )
+                        )
+                      ) 
+                    ]
+                  )
+                ]
+              )
+            )
+          )
+        );
+      },
+      foregroundColor: Colors.white,
+      backgroundColor: Colors.black,
+      shape: CircleBorder(),
+      child: const Icon(Icons.add),
+    );
+  }
 }
 
-class _Page1State extends State<Page1> {
+
+class Header extends StatefulWidget {
+  const Header({super.key});
+
+  @override
+  State<Header> createState() => _HeaderState();
+}
+
+class _HeaderState extends State<Header> {
 
   late Timer _timer;
 
@@ -205,7 +253,134 @@ class _Page1State extends State<Page1> {
 
   @override
   Widget build(BuildContext context){
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 26.0,
+        right: 26.0,
+        top: 18.0,
+        bottom: 0.0,
+      ),
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Row(
+              // alignment: Alignment.centerLeft,
+              children: <Widget>[
+                Text(
+                  dayName,
+                  style: TextStyle(
+                    fontSize: 20,
+                  )
+                ),
+                PopupMenuButton<int>(
+                  icon: Icon(Icons.more_vert),
+                  color: Color(0xFFFAFAFA),
+                  onSelected: (int value) {
 
+                  },
+                  itemBuilder: (BuildContext context) => [
+                    PopupMenuItem<int>(
+                      value: 0,
+                      child: Text("Option 1"),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 1,
+                      child: Text("Option 2"),
+                    ),
+                  ],
+                )
+              ],
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ),
+          ),
+          Container(
+            height: 140,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(hourMinute, 
+                        style: TextStyle(
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold,
+                        )
+                      ),
+                      Text(monthShort,
+                        style: TextStyle(
+                          fontSize: 42,
+                          fontWeight: FontWeight.bold,
+                        )
+                      )
+                    ]
+                  )
+                ),
+                Container(
+                  width: 1,               // lebar garis
+                  height: double.infinity,             // tinggi garis
+                  color: Colors.grey,     // warna garis
+                  margin: EdgeInsets.symmetric(horizontal: 8),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(indonesiaTime, 
+                            style: TextStyle(
+                              fontSize: 20,
+                            )
+                          ),
+                          const Text('Indonesia'),
+                        ]
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(internationalTime, 
+                            style: TextStyle(
+                              fontSize: 20,
+                            )
+                          ),
+                          const Text('UTC Time'),
+                        ]
+                      ),
+                    ]
+                  )
+                ),
+              ]
+            ),
+          )
+        ]
+      )
+    );
+  }
+}
+
+class Wrapper extends StatelessWidget {
+
+  final List<Task> tasks;
+  final void Function(String) addTask;
+  final void Function(int) removeTask;
+  final void Function(int) toogleTaskStatus;
+
+  const Wrapper({
+    super.key,
+    required this.tasks,
+    required this.addTask,
+    required this.removeTask,
+    required this.toogleTaskStatus
+  });
+  
+  @override
+  Widget build(BuildContext context){
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.only(top: 0.0),
@@ -213,114 +388,7 @@ class _Page1State extends State<Page1> {
           color: Colors.white,
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 26.0,
-                  right: 26.0,
-                  top: 18.0,
-                  bottom: 0.0,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        // alignment: Alignment.centerLeft,
-                        children: <Widget>[
-                          Text(
-                            dayName,
-                            style: TextStyle(
-                              fontSize: 20,
-                            )
-                          ),
-                          PopupMenuButton<int>(
-                            icon: Icon(Icons.more_vert),
-                            color: Color(0xFFFAFAFA),
-                            onSelected: (int value) {
-
-                            },
-                            itemBuilder: (BuildContext context) => [
-                              PopupMenuItem<int>(
-                                value: 0,
-                                child: Text("Option 1"),
-                              ),
-                              PopupMenuItem<int>(
-                                value: 1,
-                                child: Text("Option 2"),
-                              ),
-                            ],
-                          )
-                        ],
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      ),
-                    ),
-                    Container(
-                      height: 140,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(hourMinute, 
-                                  style: TextStyle(
-                                    fontSize: 42,
-                                    fontWeight: FontWeight.bold,
-                                  )
-                                ),
-                                Text(monthShort,
-                                  style: TextStyle(
-                                    fontSize: 42,
-                                    fontWeight: FontWeight.bold,
-                                  )
-                                )
-                              ]
-                            )
-                          ),
-                          Container(
-                            width: 1,               // lebar garis
-                            height: double.infinity,             // tinggi garis
-                            color: Colors.grey,     // warna garis
-                            margin: EdgeInsets.symmetric(horizontal: 8),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(indonesiaTime, 
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                      )
-                                    ),
-                                    const Text('Indonesia'),
-                                  ]
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(internationalTime, 
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                      )
-                                    ),
-                                    const Text('UTC Time'),
-                                  ]
-                                ),
-                              ]
-                            )
-                          ),
-                        ]
-                      ),
-                    )
-                  ]
-                )
-              ),
+              Header(),
               Container(
                 height: 140,
                 child: WeeklyCalendar(),
@@ -328,35 +396,18 @@ class _Page1State extends State<Page1> {
               Expanded(
                 child: Container(
                   color: Colors.white,
-                  child: Tasks()
+                  child: Tasks(
+                    tasks: this.tasks,
+                    addTask: this.addTask,
+                    removeTask: this.removeTask,
+                    toogleTaskStatus: this.toogleTaskStatus,
+                  )
                 )
               )
             ]
           )
         )
       )
-    );
-  }
-}
-
-class Page2 extends StatelessWidget {
-  const Page2({super.key});
-
-  @override
-  Widget build(BuildContext context){
-    return Center(
-      child: const Text('Settings Coming Soon!')
-    );
-  }
-}
-
-class Page0 extends StatelessWidget {
-  const Page0({super.key});
-
-  @override
-  Widget build(BuildContext context){
-    return Center(
-      child: const Text('Checklist Coming Soon!')
     );
   }
 }
@@ -369,45 +420,24 @@ class Task {
   Task({required this.task, this.isDone = false, this.scheduleAt});
 }
 
-class Tasks extends StatefulWidget {
-  const Tasks({super.key});
+class Tasks extends StatelessWidget {
+  final List<Task> tasks;
+  final void Function(String) addTask;
+  final void Function(int) removeTask;
+  final void Function(int) toogleTaskStatus;
 
-  @override
-  State<Tasks> createState() => _TasksState();
-}
-
-class _TasksState extends State<Tasks> {
-
-  final List<String> data = <String>['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-  final List<Task> _tasks = [];
-  final TextEditingController _textFieldController = TextEditingController();
-
-
-  // void _addTask(String task, {DateTime? scheduleAt: }){
-  void _addTask(String task){
-    if(task.isNotEmpty){
-      _tasks.add(Task(task: task, scheduleAt: DateTime.now()));
-    }
-
-    _textFieldController.clear();
-  }
-
-  void _removeTask(int index){
-    setState((){
-      _tasks.removeAt(index);
-    });
-  }
-
-  void _toogleTaskStatus(int index){
-    setState((){
-      _tasks[index].isDone = !_tasks[index].isDone;
-    });
-  }
+  const Tasks({
+    super.key,
+    required this.tasks,
+    required this.addTask,
+    required this.removeTask,
+    required this.toogleTaskStatus
+  });
 
   @override
   Widget build(BuildContext context){
     
-    if(_tasks.isEmpty){
+    if(tasks.isEmpty){
       return Center(
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,9 +456,9 @@ class _TasksState extends State<Tasks> {
 
     return ListView.builder(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-      itemCount: data.length,
+      itemCount: tasks.length,
       itemBuilder: (BuildContext context, int index) {
-        final task = data[index];
+        final task = tasks[index];
 
         return Padding(
           padding: EdgeInsets.all(6.0),
@@ -440,7 +470,7 @@ class _TasksState extends State<Tasks> {
               // color: Color(0xFFFAFAFA),
               color: Colors.white,
               child: ListTile(
-                title: Text(task),
+                title: Text(task.task),
                 leading: Checkbox(
                   value: true,
                   onChanged: (bool? newValue) {

@@ -35,8 +35,13 @@ class _MainState extends State<Main> {
   // void _addTask(String task, {DateTime? scheduleAt: }){
   void addTask(String task){
     if(task.isNotEmpty){
-      tasks.add(Task(task: task, scheduleAt: DateTime.now()));
+      setState((){
+        tasks.add(Task(task: task, scheduleAt: this.selectedDate));
+      });
     }
+
+    print(task);
+    print(tasks);
 
     // textFieldController.clear();
   }
@@ -52,6 +57,34 @@ class _MainState extends State<Main> {
       tasks[index].isDone = !tasks[index].isDone;
     });
   }
+
+  //calender widget state
+  PageController pageController = PageController(initialPage: 1000);
+  int currentPage = 1000;
+  DateTime selectedDate = DateTime.now();
+
+  DateTime getWeekStart(int weekOffset) {
+    final now = DateTime.now();
+    final weekday = now.weekday;
+    final monday = now.subtract(Duration(days: weekday - 1));
+    return monday.add(Duration(days: 7 * weekOffset));
+  }
+
+  void onDateSelected(DateTime date){
+    setState((){
+      selectedDate = date;
+    });
+  }
+
+  List<DateTime> getWeekDates(DateTime startOfWeek) {
+    return List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
+  }
+
+  void changeCurrentPage(int index){
+    setState((){
+      currentPage = index;
+    });
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -61,6 +94,12 @@ class _MainState extends State<Main> {
         addTask: this.addTask,
         removeTask: this.removeTask,
         toogleTaskStatus: this.toogleTaskStatus,
+        pageController: this.pageController,
+        selectedDate: this.selectedDate,
+        getWeekStart: this.getWeekStart,
+        onDateSelected: this.onDateSelected,
+        getWeekDates: this.getWeekDates,
+        changeCurrentPage: this.changeCurrentPage,
       ),
       bottomNavigationBar: BottomAppBar(
         height: 60,
@@ -68,7 +107,9 @@ class _MainState extends State<Main> {
         // color: Color(0xFFFAFAFA),
         color: Colors.black,
       ), 
-      floatingActionButton: FloatingButton(),
+      floatingActionButton: FloatingButton(
+        addTask: this.addTask,
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
@@ -76,7 +117,12 @@ class _MainState extends State<Main> {
 
 class FloatingButton extends StatelessWidget {
 
-  const FloatingButton({super.key});
+  final void Function(String) addTask;
+
+  const FloatingButton({
+    super.key,
+    required this.addTask,
+  });
 
   @override
   Widget build(BuildContext context){
@@ -156,7 +202,7 @@ class FloatingButton extends StatelessWidget {
                         },
                         color: Colors.grey,
                       ),
-                      SizedBox(width: 4.0),
+                      SizedBox(width: 2.0),
                       IconButton(
                         icon: const Icon(Icons.access_time_sharp),
                         onPressed: () async {
@@ -178,7 +224,8 @@ class FloatingButton extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8.0),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8.0),
-                          onTap: () => {
+                          onTap: () {
+                            addTask('Test');
                           },
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
@@ -371,12 +418,25 @@ class Wrapper extends StatelessWidget {
   final void Function(int) removeTask;
   final void Function(int) toogleTaskStatus;
 
+  final pageController;
+  final selectedDate;
+  final DateTime Function(int) getWeekStart;
+  final void Function(DateTime) onDateSelected;
+  final List<DateTime> Function(DateTime) getWeekDates;
+  final void Function(int) changeCurrentPage;
+
   const Wrapper({
     super.key,
     required this.tasks,
     required this.addTask,
     required this.removeTask,
-    required this.toogleTaskStatus
+    required this.toogleTaskStatus,
+    required this.pageController,
+    required this.selectedDate,
+    required this.getWeekStart,
+    required this.onDateSelected,
+    required this.getWeekDates,
+    required this.changeCurrentPage,
   });
   
   @override
@@ -391,7 +451,14 @@ class Wrapper extends StatelessWidget {
               Header(),
               Container(
                 height: 140,
-                child: WeeklyCalendar(),
+                child: WeeklyCalendar(
+                  pageController: this.pageController,
+                  selectedDate: this.selectedDate,
+                  getWeekStart: this.getWeekStart,
+                  onDateSelected: this.onDateSelected,
+                  getWeekDates: this.getWeekDates,
+                  changeCurrentPage: this.changeCurrentPage,
+                ),
               ),
               Expanded(
                 child: Container(
@@ -401,6 +468,7 @@ class Wrapper extends StatelessWidget {
                     addTask: this.addTask,
                     removeTask: this.removeTask,
                     toogleTaskStatus: this.toogleTaskStatus,
+                    selectedDate: this.selectedDate,
                   )
                 )
               )
@@ -415,13 +483,14 @@ class Wrapper extends StatelessWidget {
 class Task {
   String task;
   bool isDone;
-  DateTime? scheduleAt;
+  DateTime scheduleAt;
 
-  Task({required this.task, this.isDone = false, this.scheduleAt});
+  Task({required this.task, this.isDone = false, required this.scheduleAt});
 }
 
 class Tasks extends StatelessWidget {
   final List<Task> tasks;
+  final DateTime selectedDate;
   final void Function(String) addTask;
   final void Function(int) removeTask;
   final void Function(int) toogleTaskStatus;
@@ -431,13 +500,16 @@ class Tasks extends StatelessWidget {
     required this.tasks,
     required this.addTask,
     required this.removeTask,
-    required this.toogleTaskStatus
+    required this.toogleTaskStatus,
+    required this.selectedDate,
   });
 
   @override
   Widget build(BuildContext context){
+
+    final tasksAccordingToDate = tasks.where((task) => _isSameDate(task.scheduleAt, selectedDate)).toList();
     
-    if(tasks.isEmpty){
+    if(tasksAccordingToDate.isEmpty){
       return Center(
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,9 +528,9 @@ class Tasks extends StatelessWidget {
 
     return ListView.builder(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-      itemCount: tasks.length,
+      itemCount: tasksAccordingToDate.length,
       itemBuilder: (BuildContext context, int index) {
-        final task = tasks[index];
+        final task = tasksAccordingToDate[index];
 
         return Padding(
           padding: EdgeInsets.all(6.0),
@@ -486,36 +558,30 @@ class Tasks extends StatelessWidget {
       }
     );
   }
+  bool _isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
 }
 
 
-class WeeklyCalendar extends StatefulWidget {
-  @override
-  _WeeklyCalendarState createState() => _WeeklyCalendarState();
-}
+class WeeklyCalendar extends StatelessWidget {
 
-class _WeeklyCalendarState extends State<WeeklyCalendar> {
-  PageController _pageController = PageController(initialPage: 1000);
-  int _currentPage = 1000;
+  final pageController;
+  final selectedDate;
+  final DateTime Function(int) getWeekStart;
+  final void Function(DateTime) onDateSelected;
+  final List<DateTime> Function(DateTime) getWeekDates;
+  final void Function(int) changeCurrentPage;
 
-  DateTime selectedDate = DateTime.now();
-
-  DateTime getWeekStart(int weekOffset) {
-    final now = DateTime.now();
-    final weekday = now.weekday;
-    final monday = now.subtract(Duration(days: weekday - 1));
-    return monday.add(Duration(days: 7 * weekOffset));
-  }
-
-  void _onDateSelected(DateTime date){
-    setState((){
-      selectedDate = date;
-    });
-  }
-
-  List<DateTime> getWeekDates(DateTime startOfWeek) {
-    return List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
-  }
+  const WeeklyCalendar({
+    super.key,
+    required this.pageController,
+    required this.selectedDate,
+    required this.getWeekStart,
+    required this.onDateSelected,
+    required this.getWeekDates,
+    required this.changeCurrentPage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -542,11 +608,9 @@ class _WeeklyCalendarState extends State<WeeklyCalendar> {
           height: 80,
           // width: double.infinity,
           child: PageView.builder(
-            controller: _pageController,
+            controller: pageController,
             onPageChanged: (int index) {
-              setState(() {
-                _currentPage = index;
-              });
+              changeCurrentPage(index);
             },
             itemBuilder: (context, index) {
               final weekStart = getWeekStart(index - 1000);
@@ -559,8 +623,7 @@ class _WeeklyCalendarState extends State<WeeklyCalendar> {
 
                   return GestureDetector(
                     onTap: () {
-                      print(date);
-                      _onDateSelected(date);
+                      onDateSelected(date);
                     },
                     child: Column(
                       children: [

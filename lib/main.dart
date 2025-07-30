@@ -129,7 +129,7 @@ class FloatingButton extends StatelessWidget {
     return FloatingActionButton(
       onPressed: () {
         showModalBottomSheet(
-          // isScrollControlled: true,
+          isScrollControlled: true,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(15.0),
@@ -193,6 +193,26 @@ class FloatingButton extends StatelessWidget {
                             initialDate: DateTime.now(),
                             firstDate: DateTime(2019),
                             lastDate: DateTime(2050),
+                            builder: (context, child) {
+                              return Theme(
+                                data: ThemeData(
+                                  timePickerTheme: TimePickerThemeData(
+                                    // backgroundColor: Colors.black,
+                                    // hourMinuteTextColor: Colors.white,
+                                    // hourMinuteColor: Colors.grey[800],
+                                    // dayPeriodTextColor: Colors.amber,
+                                    // dialHandColor: Colors.amber,
+                                    // dialBackgroundColor: Colors.grey[900],
+                                    // entryModeIconColor: Colors.amber,
+                                  ),
+                                  colorScheme: ColorScheme.light(
+                                    primary: Colors.black,
+                                    // onSurface: Colors.white,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
 
                           // setState(() {
@@ -210,6 +230,26 @@ class FloatingButton extends StatelessWidget {
                             context: context,
                             initialEntryMode: TimePickerEntryMode.dial,
                             initialTime: TimeOfDay.now(),
+                            builder: (BuildContext context, Widget? child) {
+                              return Theme(
+                                data: ThemeData(
+                                  timePickerTheme: TimePickerThemeData(
+                                    // backgroundColor: Colors.black,
+                                    // hourMinuteTextColor: Colors.white,
+                                    // hourMinuteColor: Colors.grey[800],
+                                    // dayPeriodTextColor: Colors.amber,
+                                    // dialHandColor: Colors.amber,
+                                    // dialBackgroundColor: Colors.grey[900],
+                                    // entryModeIconColor: Colors.amber,
+                                  ),
+                                  colorScheme: ColorScheme.light(
+                                    primary: Colors.black,
+                                    // onSurface: Colors.white,
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
 
                           // setState(() {

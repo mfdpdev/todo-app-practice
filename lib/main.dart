@@ -30,17 +30,17 @@ class _MainState extends State<Main> {
 
   // final List<String> data = <String>['A', 'B', 'C', 'D', 'E', 'F', 'G'];
   final List<Task> tasks = [];
-  // final TextEditingController _textFieldController = TextEditingController();
+  final TextEditingController textFieldController = TextEditingController();
 
   // void _addTask(String task, {DateTime? scheduleAt: }){
-  void addTask(String task){
-    if(task.isNotEmpty){
+  void addTask(DateTime scheduleAt){
+    if(textFieldController.text.isNotEmpty){
       setState((){
-        tasks.add(Task(task: task, scheduleAt: this.selectedDate));
+        tasks.add(Task(task: textFieldController.text, scheduleAt: this.selectedDate));
       });
     }
 
-    // textFieldController.clear();
+    textFieldController.clear();
   }
 
   void removeTask(int index){
@@ -82,6 +82,12 @@ class _MainState extends State<Main> {
       currentPage = index;
     });
   }
+
+  @override
+  void dispose(){
+    textFieldController.dispose();
+    super.dispose();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -107,6 +113,7 @@ class _MainState extends State<Main> {
       floatingActionButton: FloatingButton(
         addTask: this.addTask,
         selectedDate: this.selectedDate,
+        textFieldController: textFieldController,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -115,13 +122,15 @@ class _MainState extends State<Main> {
 
 class FloatingButton extends StatefulWidget {
 
-  final void Function(String) addTask;
+  final void Function(DateTime) addTask;
+  final TextEditingController textFieldController;
   final DateTime selectedDate;
 
   const FloatingButton({
     super.key,
     required this.addTask,
     required this.selectedDate,
+    required this.textFieldController,
   });
 
   @override
@@ -182,6 +191,7 @@ class _FloatingButtonState extends State<FloatingButton> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
+                    controller: widget.textFieldController,
                     cursorColor: Colors.black,
                     decoration: const InputDecoration(
                       // border: OutlineInputBorder(),
@@ -295,9 +305,8 @@ class _FloatingButtonState extends State<FloatingButton> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8.0),
                           onTap: () {
-                            final DateTime result = _combineDateAndTime();
-
-                            // widget.addTask('Test');
+                            final DateTime dateTime = _combineDateAndTime();
+                            widget.addTask(dateTime);
                             fromDatePicker = null;
                             fromTimePicker = null;
                           },
@@ -403,11 +412,11 @@ class _HeaderState extends State<Header> {
                   itemBuilder: (BuildContext context) => [
                     PopupMenuItem<int>(
                       value: 0,
-                      child: Text("Option 1"),
+                      child: Text("GAtaw mAlezz"),
                     ),
                     PopupMenuItem<int>(
                       value: 1,
-                      child: Text("Option 2"),
+                      child: Text("P!ingin beli trreckk"),
                     ),
                   ],
                 )
@@ -488,7 +497,7 @@ class _HeaderState extends State<Header> {
 class Wrapper extends StatelessWidget {
 
   final List<Task> tasks;
-  final void Function(String) addTask;
+  final void Function(DateTime) addTask;
   final void Function(int) removeTask;
   final void Function(int) toogleTaskStatus;
 
@@ -565,7 +574,7 @@ class Task {
 class Tasks extends StatelessWidget {
   final List<Task> tasks;
   final DateTime selectedDate;
-  final void Function(String) addTask;
+  final void Function(DateTime) addTask;
   final void Function(int) removeTask;
   final void Function(int) toogleTaskStatus;
 

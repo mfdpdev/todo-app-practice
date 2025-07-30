@@ -40,9 +40,6 @@ class _MainState extends State<Main> {
       });
     }
 
-    print(task);
-    print(tasks);
-
     // textFieldController.clear();
   }
 
@@ -109,20 +106,54 @@ class _MainState extends State<Main> {
       ), 
       floatingActionButton: FloatingButton(
         addTask: this.addTask,
+        selectedDate: this.selectedDate,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
 
-class FloatingButton extends StatelessWidget {
+class FloatingButton extends StatefulWidget {
 
   final void Function(String) addTask;
+  final DateTime selectedDate;
 
   const FloatingButton({
     super.key,
     required this.addTask,
+    required this.selectedDate,
   });
+
+  @override
+  State<FloatingButton> createState() => _FloatingButtonState();
+}
+
+class _FloatingButtonState extends State<FloatingButton> {
+
+  DateTime? fromDatePicker; 
+  TimeOfDay? fromTimePicker;
+
+  DateTime? combinedDateTime;
+
+  @override
+  void initState(){
+    super.initState();
+  }
+
+  DateTime _combineDateAndTime() {
+    DateTime? tempDate = fromDatePicker != null ? fromDatePicker : widget.selectedDate;
+    TimeOfDay? tempTime = fromTimePicker != null ? fromTimePicker : TimeOfDay.now();
+
+    combinedDateTime = DateTime(
+      tempDate!.year,
+      tempDate!.month,
+      tempDate!.day,
+      tempTime!.hour,
+      tempTime!.minute,
+    );
+
+    return combinedDateTime!;
+  }
 
   @override
   Widget build(BuildContext context){
@@ -190,7 +221,7 @@ class FloatingButton extends StatelessWidget {
                           final pickedDate = await showDatePicker(
                             context: context,
                             initialEntryMode: DatePickerEntryMode.calendarOnly,
-                            initialDate: DateTime.now(),
+                            initialDate: widget.selectedDate,
                             firstDate: DateTime(2019),
                             lastDate: DateTime(2050),
                             builder: (context, child) {
@@ -215,9 +246,9 @@ class FloatingButton extends StatelessWidget {
                             },
                           );
 
-                          // setState(() {
-                          //   selectedDate = pickedDate;
-                          // });
+                          setState(() {
+                            fromDatePicker = pickedDate!;
+                          });
 
                         },
                         color: Colors.grey,
@@ -226,7 +257,7 @@ class FloatingButton extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.access_time_sharp),
                         onPressed: () async {
-                          var pickedTime = await showTimePicker(
+                          final pickedTime = await showTimePicker(
                             context: context,
                             initialEntryMode: TimePickerEntryMode.dial,
                             initialTime: TimeOfDay.now(),
@@ -241,8 +272,7 @@ class FloatingButton extends StatelessWidget {
                                     // dialHandColor: Colors.amber,
                                     // dialBackgroundColor: Colors.grey[900],
                                     // entryModeIconColor: Colors.amber,
-                                  ),
-                                  colorScheme: ColorScheme.light(
+                                  ), colorScheme: ColorScheme.light(
                                     primary: Colors.black,
                                     // onSurface: Colors.white,
                                   ),
@@ -252,9 +282,9 @@ class FloatingButton extends StatelessWidget {
                             },
                           );
 
-                          // setState(() {
-                          //   selectedDate = pickedDate;
-                          // });
+                          setState(() {
+                            fromTimePicker = pickedTime!;
+                          });
                         },
                         color: Colors.grey,
                       ),
@@ -265,7 +295,11 @@ class FloatingButton extends StatelessWidget {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8.0),
                           onTap: () {
-                            addTask('Test');
+                            final DateTime result = _combineDateAndTime();
+
+                            // widget.addTask('Test');
+                            fromDatePicker = null;
+                            fromTimePicker = null;
                           },
                           child: Padding(
                             padding: EdgeInsets.all(8.0),

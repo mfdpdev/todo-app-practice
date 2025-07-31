@@ -94,7 +94,6 @@ class _MainState extends State<Main> {
     return Scaffold(
       body: Wrapper(
         tasks: this.tasks,
-        addTask: this.addTask,
         removeTask: this.removeTask,
         toogleTaskStatus: this.toogleTaskStatus,
         pageController: this.pageController,
@@ -225,8 +224,16 @@ class _FloatingButtonState extends State<FloatingButton> {
                   // SizedBox(height: 8),
                   Row(
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.calendar_today),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          backgroundColor: Colors.grey[100],
+                          foregroundColor: Colors.grey[500],
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          )
+                        ),
                         onPressed: () async {
                           final pickedDate = await showDatePicker(
                             context: context,
@@ -259,18 +266,25 @@ class _FloatingButtonState extends State<FloatingButton> {
                           setState(() {
                             fromDatePicker = pickedDate!;
                           });
-
                         },
-                        color: Colors.grey,
+                        child: Text(fromDatePicker != null ? DateFormat('dd/MM/yyyy').format(fromDatePicker!) : DateFormat('dd/MM/yyyy').format(DateTime.now())),
                       ),
-                      SizedBox(width: 2.0),
-                      IconButton(
-                        icon: const Icon(Icons.access_time_sharp),
+                      SizedBox(width: 4.0),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          backgroundColor: Colors.grey[100],
+                          foregroundColor: Colors.grey[500],
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                          )
+                        ),
                         onPressed: () async {
                           final pickedTime = await showTimePicker(
                             context: context,
                             initialEntryMode: TimePickerEntryMode.dial,
-                            initialTime: TimeOfDay.now(),
+                            initialTime: fromTimePicker != null ? fromTimePicker! : TimeOfDay.now(),
                             builder: (BuildContext context, Widget? child) {
                               return Theme(
                                 data: ThemeData(
@@ -296,7 +310,8 @@ class _FloatingButtonState extends State<FloatingButton> {
                             fromTimePicker = pickedTime!;
                           });
                         },
-                        color: Colors.grey,
+                        child: Text(fromTimePicker != null ? DateFormat('HH:mm').format( DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, fromTimePicker!.hour, fromTimePicker!.minute))
+                                 : DateFormat('HH:mm').format( DateTime.now().copyWith(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute)))
                       ),
                       Spacer(),
                       Material(
@@ -322,7 +337,10 @@ class _FloatingButtonState extends State<FloatingButton> {
               )
             )
           )
-        );
+        ).whenComplete((){
+          fromDatePicker = null;
+          fromTimePicker = null;
+        });
       },
       foregroundColor: Colors.white,
       backgroundColor: Colors.black,
@@ -387,7 +405,7 @@ class _HeaderState extends State<Header> {
       padding: EdgeInsets.only(
         left: 26.0,
         right: 26.0,
-        top: 18.0,
+        top: 10.0,
         bottom: 0.0,
       ),
       child: Column(
@@ -497,7 +515,6 @@ class _HeaderState extends State<Header> {
 class Wrapper extends StatelessWidget {
 
   final List<Task> tasks;
-  final void Function(DateTime) addTask;
   final void Function(int) removeTask;
   final void Function(int) toogleTaskStatus;
 
@@ -511,7 +528,6 @@ class Wrapper extends StatelessWidget {
   const Wrapper({
     super.key,
     required this.tasks,
-    required this.addTask,
     required this.removeTask,
     required this.toogleTaskStatus,
     required this.pageController,
@@ -548,7 +564,6 @@ class Wrapper extends StatelessWidget {
                   color: Colors.white,
                   child: Tasks(
                     tasks: this.tasks,
-                    addTask: this.addTask,
                     removeTask: this.removeTask,
                     toogleTaskStatus: this.toogleTaskStatus,
                     selectedDate: this.selectedDate,
@@ -574,14 +589,12 @@ class Task {
 class Tasks extends StatelessWidget {
   final List<Task> tasks;
   final DateTime selectedDate;
-  final void Function(DateTime) addTask;
   final void Function(int) removeTask;
   final void Function(int) toogleTaskStatus;
 
   const Tasks({
     super.key,
     required this.tasks,
-    required this.addTask,
     required this.removeTask,
     required this.toogleTaskStatus,
     required this.selectedDate,
@@ -761,46 +774,3 @@ class WeeklyCalendar extends StatelessWidget {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }
-
-
-              // SingleChildScrollView(
-              //   scrollDirection: Axis.horizontal,
-              //   child: Row(
-              //     children: List.generate(31, (dayIndex) {
-              //       DateTime date = DateTime(startOfMonth.year, startOfMonth.month, dayIndex + 1);
-              //       return Padding(
-              //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              //         child: GestureDetector(
-              //           onTap: () {
-              //             _onDateSelected(date);
-              //           },
-              //           child: Column(
-              //             children: [
-              //               Text(
-              //                 DateFormat('E').format(date),
-              //               ),
-              //               SizedBox(height: 4),
-              //               Container(
-              //                 padding: EdgeInsets.all(10.0),
-              //                 decoration: BoxDecoration(
-              //                   shape: BoxShape.circle,
-              //                   color: Colors.black,
-              //                   border: Border.all(
-              //                     color: Colors.black,
-              //                     width: 2,
-              //                   )
-              //                 ),
-              //                 child: Text(
-              //                   date.day.toString(),
-              //                   style: TextStyle(
-              //                     color: Colors.white,
-              //                   )
-              //                 )
-              //               )
-              //             ]
-              //           )
-              //         )
-              //       );
-              //     })
-              //   )
-              // )

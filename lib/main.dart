@@ -634,11 +634,26 @@ class Tasks extends StatelessWidget {
             color: Colors.black,
             elevation: 1,
             child: Container(
-              height: 60,
+              // height: 60,
               // color: Color(0xFFFAFAFA),
               color: Colors.white,
               child: ListTile(
-                title: Text(task.task),
+                contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0), // Memberikan padding agar elemen tidak terlalu rapat
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(task.task),
+                    Text(
+                      DateFormat("HH:mm").format(task.scheduleAt),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[500],
+                      )
+                    ),
+                  ]
+                ),
                 leading: Checkbox(
                   value: true,
                   onChanged: (bool? newValue) {
@@ -647,6 +662,35 @@ class Tasks extends StatelessWidget {
                   checkColor: Colors.white,  // Warna icon check saat checked
                   side: BorderSide(color: Colors.grey, width: 2),  // Warna border saat unchecked
                 ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      style: IconButton.styleFrom(
+                        // backgroundColor: Colors.grey[100],
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8))
+                        )
+                      ),
+                      onPressed: (){
+                        print(index);
+                      }
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      style: IconButton.styleFrom(
+                        // backgroundColor: Colors.grey[100],
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8))
+                        )
+                      ),
+                      onPressed: (){
+                        removeTask(index);
+                      }
+                    ),
+                  ]
+                )
               ) 
             )
           )

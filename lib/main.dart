@@ -109,10 +109,26 @@ class _MainState extends State<Main> {
         // color: Color(0xFFFAFAFA),
         color: Colors.black,
       ), 
-      floatingActionButton: FloatingButton(
-        addTask: this.addTask,
-        selectedDate: this.selectedDate,
-        textFieldController: textFieldController,
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          showModalBottomSheet(
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(15.0),
+              ), // Sudut melengkung
+            ),
+            context: context,
+            builder: (context) => AddBottomSheet(
+              addTask: this.addTask,
+              selectedDate: this.selectedDate,
+            ),
+          ).whenComplete((){ });
+        },
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.black,
+        shape: CircleBorder(),
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -325,14 +341,177 @@ class _FloatingButtonState extends State<FloatingButton> {
   }
 }
 
+class AddBottomSheet extends StatefulWidget {
+
+  final void Function(DateTime) addTask;
+  final DateTime selectedDate;
+
+
+  const AddBottomSheet({
+    super.key
+    required this.selectedDate,
+    required this.addTask,
+  });
+
+  State<AddBottomSheet> createState() => _AddBottomSheetState();
+}
+
+class _AddBottomSheetState extends State<AddBottomSheet> {
+
+  final TextEditingController textFieldController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        top: 16,
+        left: 16,
+        right: 16,
+      ),
+      child: SingleChildScrollView(
+        // Agar konten bisa geser ke atas saat keyboard muncul
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: textFieldController,
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: 'Enter your task here...',
+                border: InputBorder.none,
+              ),
+            ),
+            Row(
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                    backgroundColor: Colors.grey[100],
+                    foregroundColor: Colors.grey[500],
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8))
+                    )
+                  ),
+                  onPressed: () async {
+                    final pickedDate = await showDatePicker(
+                      context: context,
+                      initialEntryMode: DatePickerEntryMode.calendarOnly,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2019),
+                      lastDate: DateTime(2050),
+                      builder: (context, child) {
+                        return Theme(
+                          data: ThemeData(
+                            timePickerTheme: TimePickerThemeData(
+                              // backgroundColor: Colors.black,
+                              // hourMinuteTextColor: Colors.white,
+                              // hourMinuteColor: Colors.grey[800],
+                              // dayPeriodTextColor: Colors.amber,
+                              // dialHandColor: Colors.amber,
+                              // dialBackgroundColor: Colors.grey[900],
+                              // entryModeIconColor: Colors.amber,
+                            ),
+                            colorScheme: ColorScheme.light(
+                              primary: Colors.black,
+                              // onSurface: Colors.white,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    // setState(() {
+                    //   fromDatePicker = pickedDate!;
+                    // });
+                  },
+                  child: Text(DateFormat('dd/MM/yyyy').format(DateTime.now())),
+                ),
+                SizedBox(width: 4.0),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                    backgroundColor: Colors.grey[100],
+                    foregroundColor: Colors.grey[500],
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8))
+                    )
+                  ),
+                  onPressed: () async {
+                    final pickedTime = await showTimePicker(
+                      context: context,
+                      initialEntryMode: TimePickerEntryMode.dial,
+                      initialTime: TimeOfDay.now(),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData(
+                            timePickerTheme: TimePickerThemeData(
+                              // backgroundColor: Colors.black,
+                              // hourMinuteTextColor: Colors.white,
+                              // hourMinuteColor: Colors.grey[800],
+                              // dayPeriodTextColor: Colors.amber,
+                              // dialHandColor: Colors.amber,
+                              // dialBackgroundColor: Colors.grey[900],
+                              // entryModeIconColor: Colors.amber,
+                            ), colorScheme: ColorScheme.light(
+                              primary: Colors.black,
+                              // onSurface: Colors.white,
+                            ),
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    // setState(() {
+                    //   fromTimePicker = pickedTime!;
+                    // });
+                  },
+                  child: Text(DateFormat('HH:mm').format( DateTime.now().copyWith(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute)))
+                ),
+                Spacer(),
+                Material(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8.0),
+                    onTap: () {
+                      // final DateTime dateTime = _combineDateAndTime();
+                      // widget.addTask(dateTime);
+                      // fromDatePicker = null;
+                      // fromTimePicker = null;
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(Icons.add, color: Colors.white)
+                    )
+                  )
+                ) 
+              ]
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class UpdateBottomSheet extends StatefulWidget {
   const UpdateBottomSheet({super.key});
 
   @override
-  State<UpdateBottomSheet> createState() => _UpdateBottomSheet();
+  State<UpdateBottomSheet> createState() => _UpdateBottomSheetState();
 }
 
-class _UpdateBottomSheet extends State<UpdateBottomSheet> {
+class _UpdateBottomSheetState extends State<UpdateBottomSheet> {
   
   @override
   void initState(){

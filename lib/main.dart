@@ -175,168 +175,143 @@ class _FloatingButtonState extends State<FloatingButton> {
             ), // Sudut melengkung
           ),
           context: context,
-          builder: (context) => Container(
-            // height: 200,
-            // shape: RoundedRectangleBorder,
-            decoration: BoxDecoration(
-              color: Colors.white, // Pindahkan warna ke sini
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(15.0), // Tambahkan borderRadius di sini juga
+          builder: (context) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                top: 16,
+                left: 16,
+                right: 16,
               ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: widget.textFieldController,
-                    cursorColor: Colors.black,
-                    decoration: const InputDecoration(
-                      // border: OutlineInputBorder(),
-                      // labelText: 'Todo',
-                      // labelStyle: TextStyle(
-                      //   color: Colors.black,
-                      // ),
-                      // hintText: 'Masukkan sesuatu...',
-                      // hintStyle: TextStyle(
-                      //   color: Colors.grey.shade500, // Warna hint text
-                      // ),
-                      // fillColor: Colors.blue.shade50, // Background warna
-                      // filled: true,  // Mengaktifkan fillColor
-                      // focusedBorder: OutlineInputBorder(
-                      //   borderSide: BorderSide(
-                      //     color: Colors.black, // Warna border saat difokuskan
-                      //     width: 2,
-                      //   ),
-                      // ),
-                      // enabledBorder: OutlineInputBorder(
-                      //   borderSide: BorderSide(
-                      //     color: Colors.black, // Warna border saat tidak difokuskan
-                      //     width: 2,
-                      //   ),
-                      // ),
-                      border: InputBorder.none,
-                      hintText: 'Enter your task here ...',
+              child: SingleChildScrollView(
+                // Agar konten bisa geser ke atas saat keyboard muncul
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: widget.textFieldController,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter your task here...',
+                        border: InputBorder.none,
+                      ),
                     ),
-                    autofocus: true,
-                  ),
-                  // SizedBox(height: 8),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
-                          backgroundColor: Colors.grey[100],
-                          foregroundColor: Colors.grey[500],
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8))
-                          )
-                        ),
-                        onPressed: () async {
-                          final pickedDate = await showDatePicker(
-                            context: context,
-                            initialEntryMode: DatePickerEntryMode.calendarOnly,
-                            initialDate: widget.selectedDate,
-                            firstDate: DateTime(2019),
-                            lastDate: DateTime(2050),
-                            builder: (context, child) {
-                              return Theme(
-                                data: ThemeData(
-                                  timePickerTheme: TimePickerThemeData(
-                                    // backgroundColor: Colors.black,
-                                    // hourMinuteTextColor: Colors.white,
-                                    // hourMinuteColor: Colors.grey[800],
-                                    // dayPeriodTextColor: Colors.amber,
-                                    // dialHandColor: Colors.amber,
-                                    // dialBackgroundColor: Colors.grey[900],
-                                    // entryModeIconColor: Colors.amber,
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            backgroundColor: Colors.grey[100],
+                            foregroundColor: Colors.grey[500],
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8))
+                            )
+                          ),
+                          onPressed: () async {
+                            final pickedDate = await showDatePicker(
+                              context: context,
+                              initialEntryMode: DatePickerEntryMode.calendarOnly,
+                              initialDate: widget.selectedDate,
+                              firstDate: DateTime(2019),
+                              lastDate: DateTime(2050),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: ThemeData(
+                                    timePickerTheme: TimePickerThemeData(
+                                      // backgroundColor: Colors.black,
+                                      // hourMinuteTextColor: Colors.white,
+                                      // hourMinuteColor: Colors.grey[800],
+                                      // dayPeriodTextColor: Colors.amber,
+                                      // dialHandColor: Colors.amber,
+                                      // dialBackgroundColor: Colors.grey[900],
+                                      // entryModeIconColor: Colors.amber,
+                                    ),
+                                    colorScheme: ColorScheme.light(
+                                      primary: Colors.black,
+                                      // onSurface: Colors.white,
+                                    ),
                                   ),
-                                  colorScheme: ColorScheme.light(
-                                    primary: Colors.black,
-                                    // onSurface: Colors.white,
-                                  ),
-                                ),
-                                child: child!,
-                              );
-                            },
-                          );
+                                  child: child!,
+                                );
+                              },
+                            );
 
-                          setState(() {
-                            fromDatePicker = pickedDate!;
-                          });
-                        },
-                        child: Text(fromDatePicker != null ? DateFormat('dd/MM/yyyy').format(fromDatePicker!) : DateFormat('dd/MM/yyyy').format(DateTime.now())),
-                      ),
-                      SizedBox(width: 4.0),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
-                          backgroundColor: Colors.grey[100],
-                          foregroundColor: Colors.grey[500],
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8))
-                          )
-                        ),
-                        onPressed: () async {
-                          final pickedTime = await showTimePicker(
-                            context: context,
-                            initialEntryMode: TimePickerEntryMode.dial,
-                            initialTime: fromTimePicker != null ? fromTimePicker! : TimeOfDay.now(),
-                            builder: (BuildContext context, Widget? child) {
-                              return Theme(
-                                data: ThemeData(
-                                  timePickerTheme: TimePickerThemeData(
-                                    // backgroundColor: Colors.black,
-                                    // hourMinuteTextColor: Colors.white,
-                                    // hourMinuteColor: Colors.grey[800],
-                                    // dayPeriodTextColor: Colors.amber,
-                                    // dialHandColor: Colors.amber,
-                                    // dialBackgroundColor: Colors.grey[900],
-                                    // entryModeIconColor: Colors.amber,
-                                  ), colorScheme: ColorScheme.light(
-                                    primary: Colors.black,
-                                    // onSurface: Colors.white,
-                                  ),
-                                ),
-                                child: child!,
-                              );
-                            },
-                          );
-
-                          setState(() {
-                            fromTimePicker = pickedTime!;
-                          });
-                        },
-                        child: Text(fromTimePicker != null ? DateFormat('HH:mm').format( DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, fromTimePicker!.hour, fromTimePicker!.minute))
-                                 : DateFormat('HH:mm').format( DateTime.now().copyWith(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute)))
-                      ),
-                      Spacer(),
-                      Material(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(8.0),
-                          onTap: () {
-                            final DateTime dateTime = _combineDateAndTime();
-                            widget.addTask(dateTime);
-                            fromDatePicker = null;
-                            fromTimePicker = null;
+                            setState(() {
+                              fromDatePicker = pickedDate!;
+                            });
                           },
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(Icons.add, color: Colors.white)
+                          child: Text(fromDatePicker != null ? DateFormat('dd/MM/yyyy').format(fromDatePicker!) : DateFormat('dd/MM/yyyy').format(DateTime.now())),
+                        ),
+                        SizedBox(width: 4.0),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            backgroundColor: Colors.grey[100],
+                            foregroundColor: Colors.grey[500],
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(8))
+                            )
+                          ),
+                          onPressed: () async {
+                            final pickedTime = await showTimePicker(
+                              context: context,
+                              initialEntryMode: TimePickerEntryMode.dial,
+                              initialTime: fromTimePicker != null ? fromTimePicker! : TimeOfDay.now(),
+                              builder: (BuildContext context, Widget? child) {
+                                return Theme(
+                                  data: ThemeData(
+                                    timePickerTheme: TimePickerThemeData(
+                                      // backgroundColor: Colors.black,
+                                      // hourMinuteTextColor: Colors.white,
+                                      // hourMinuteColor: Colors.grey[800],
+                                      // dayPeriodTextColor: Colors.amber,
+                                      // dialHandColor: Colors.amber,
+                                      // dialBackgroundColor: Colors.grey[900],
+                                      // entryModeIconColor: Colors.amber,
+                                    ), colorScheme: ColorScheme.light(
+                                      primary: Colors.black,
+                                      // onSurface: Colors.white,
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
+                            );
+
+                            setState(() {
+                              fromTimePicker = pickedTime!;
+                            });
+                          },
+                          child: Text(fromTimePicker != null ? DateFormat('HH:mm').format( DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, fromTimePicker!.hour, fromTimePicker!.minute))
+                                   : DateFormat('HH:mm').format( DateTime.now().copyWith(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute)))
+                        ),
+                        Spacer(),
+                        Material(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(8.0),
+                            onTap: () {
+                              final DateTime dateTime = _combineDateAndTime();
+                              widget.addTask(dateTime);
+                              fromDatePicker = null;
+                              fromTimePicker = null;
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(Icons.add, color: Colors.white)
+                            )
                           )
-                        )
-                      ) 
-                    ]
-                  )
-                ]
-              )
-            )
-          )
+                        ) 
+                      ]
+                    )
+                  ],
+                ),
+              ),
+            );
+          }
         ).whenComplete((){
           fromDatePicker = null;
           fromTimePicker = null;
@@ -350,6 +325,158 @@ class _FloatingButtonState extends State<FloatingButton> {
   }
 }
 
+Future<void> showUpdateSheet ({
+  required BuildContext context,
+}){
+  return showModalBottomSheet(
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(15.0),
+      ), // Sudut melengkung
+    ),
+    context: context,
+    builder: (context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          top: 16,
+          left: 16,
+          right: 16,
+        ),
+        child: SingleChildScrollView(
+          // Agar konten bisa geser ke atas saat keyboard muncul
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                // controller: widget.textFieldController,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your task here...',
+                  border: InputBorder.none,
+                ),
+              ),
+              Row(
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                      backgroundColor: Colors.grey[100],
+                      foregroundColor: Colors.grey[500],
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      )
+                    ),
+                    onPressed: () async {
+                      final pickedDate = await showDatePicker(
+                        context: context,
+                        initialEntryMode: DatePickerEntryMode.calendarOnly,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2019),
+                        lastDate: DateTime(2050),
+                        builder: (context, child) {
+                          return Theme(
+                            data: ThemeData(
+                              timePickerTheme: TimePickerThemeData(
+                                // backgroundColor: Colors.black,
+                                // hourMinuteTextColor: Colors.white,
+                                // hourMinuteColor: Colors.grey[800],
+                                // dayPeriodTextColor: Colors.amber,
+                                // dialHandColor: Colors.amber,
+                                // dialBackgroundColor: Colors.grey[900],
+                                // entryModeIconColor: Colors.amber,
+                              ),
+                              colorScheme: ColorScheme.light(
+                                primary: Colors.black,
+                                // onSurface: Colors.white,
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+
+                      // setState(() {
+                      //   fromDatePicker = pickedDate!;
+                      // });
+                    },
+                    child: Text(DateFormat('dd/MM/yyyy').format(DateTime.now())),
+                  ),
+                  SizedBox(width: 4.0),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                      backgroundColor: Colors.grey[100],
+                      foregroundColor: Colors.grey[500],
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      )
+                    ),
+                    onPressed: () async {
+                      final pickedTime = await showTimePicker(
+                        context: context,
+                        initialEntryMode: TimePickerEntryMode.dial,
+                        initialTime: TimeOfDay.now(),
+                        builder: (BuildContext context, Widget? child) {
+                          return Theme(
+                            data: ThemeData(
+                              timePickerTheme: TimePickerThemeData(
+                                // backgroundColor: Colors.black,
+                                // hourMinuteTextColor: Colors.white,
+                                // hourMinuteColor: Colors.grey[800],
+                                // dayPeriodTextColor: Colors.amber,
+                                // dialHandColor: Colors.amber,
+                                // dialBackgroundColor: Colors.grey[900],
+                                // entryModeIconColor: Colors.amber,
+                              ), colorScheme: ColorScheme.light(
+                                primary: Colors.black,
+                                // onSurface: Colors.white,
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+
+                      // setState(() {
+                      //   fromTimePicker = pickedTime!;
+                      // });
+                    },
+                    child: Text(DateFormat('HH:mm').format( DateTime.now().copyWith(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute))),
+                  ),
+                  Spacer(),
+                  Material(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8.0),
+                      onTap: () {
+                        // final DateTime dateTime = _combineDateAndTime();
+                        // widget.addTask(dateTime);
+                        // fromDatePicker = null;
+                        // fromTimePicker = null;
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.edit, color: Colors.white)
+                      )
+                    )
+                  ) 
+                ]
+              )
+            ],
+          ),
+        ),
+      );
+    }
+  ).whenComplete((){
+    // fromDatePicker = null;
+    // fromTimePicker = null;
+  });
+}
 
 class Header extends StatefulWidget {
   const Header({super.key});
@@ -674,7 +801,7 @@ class Tasks extends StatelessWidget {
                         )
                       ),
                       onPressed: (){
-                        print(index);
+                        showUpdateSheet(context: context);
                       }
                     ),
                     IconButton(

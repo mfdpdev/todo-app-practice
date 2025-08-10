@@ -32,19 +32,19 @@ class _MainState extends State<Main> {
   final List<Task> tasks = [];
 
   // void _addTask(String task, {DateTime? scheduleAt: }){
-  void addTask(TextEditingController textFieldController, DateTime scheduleAt){
+  void addTask(String id, TextEditingController textFieldController, DateTime scheduleAt){
     if(textFieldController.text.isNotEmpty){
       setState((){
-        tasks.add(Task(task: textFieldController.text, scheduleAt: scheduleAt));
+        tasks.add(Task(id: id, task: textFieldController.text, scheduleAt: scheduleAt));
       });
     }
 
     textFieldController.clear();
   }
 
-  void removeTask(int index){
+  void removeTask(String id){
     setState((){
-      tasks.removeAt(index);
+      tasks.removeWhere((task) => task.id == id);
     });
   }
 
@@ -135,7 +135,7 @@ class _MainState extends State<Main> {
 
 class AddBottomSheet extends StatefulWidget {
 
-  final void Function(TextEditingController, DateTime) addTask;
+  final void Function(String, TextEditingController, DateTime) addTask;
   final DateTime selectedDate;
 
 
@@ -172,6 +172,10 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
     );
 
     return combinedDateTime!;
+  }
+
+  String _generateTaskId() {
+    return DateTime.now().millisecondsSinceEpoch.toString();
   }
 
   void dispose(){
@@ -298,7 +302,8 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                     borderRadius: BorderRadius.circular(8.0),
                     onTap: () {
                       final DateTime dateTime = _combineDateAndTime();
-                      widget.addTask(textFieldController, dateTime);
+                      final id = _generateTaskId();
+                      widget.addTask(id, textFieldController, dateTime);
                     },
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
@@ -632,7 +637,7 @@ class _HeaderState extends State<Header> {
 class Wrapper extends StatelessWidget {
 
   final List<Task> tasks;
-  final void Function(int) removeTask;
+  final void Function(String) removeTask;
   final void Function(int) toogleTaskStatus;
 
   final pageController;
@@ -696,17 +701,18 @@ class Wrapper extends StatelessWidget {
 }
 
 class Task {
+  String id;
   String task;
   bool isDone;
   DateTime scheduleAt;
 
-  Task({required this.task, this.isDone = false, required this.scheduleAt});
+  Task({required this.id, required this.task, this.isDone = false, required this.scheduleAt});
 }
 
 class Tasks extends StatelessWidget {
   final List<Task> tasks;
   final DateTime selectedDate;
-  final void Function(int) removeTask;
+  final void Function(String) removeTask;
   final void Function(int) toogleTaskStatus;
 
   const Tasks({
@@ -815,7 +821,7 @@ class Tasks extends StatelessWidget {
                         )
                       ),
                       onPressed: (){
-                        removeTask(index);
+                        removeTask(task.id);
                       }
                     ),
                   ]

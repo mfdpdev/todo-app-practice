@@ -56,9 +56,12 @@ class _MainState extends State<Main> {
     });
   }
 
-  void toogleTaskStatus(int index){
+  void toogleTaskStatus(String id){
     setState((){
-      tasks[index].isDone = !tasks[index].isDone;
+      final index = tasks.indexWhere((task) => task.id == id);
+      if (index != -1) {
+        tasks[index].isDone = !tasks[index].isDone;
+      }
     });
   }
 
@@ -677,7 +680,7 @@ class Wrapper extends StatelessWidget {
 
   final List<Task> tasks;
   final void Function(String) removeTask;
-  final void Function(int) toogleTaskStatus;
+  final void Function(String) toogleTaskStatus;
   final void Function(Task) editTask;
 
   final pageController;
@@ -755,7 +758,7 @@ class Tasks extends StatelessWidget {
   final List<Task> tasks;
   final DateTime selectedDate;
   final void Function(String) removeTask;
-  final void Function(int) toogleTaskStatus;
+  final void Function(String) toogleTaskStatus;
   final void Function(Task) editTask;
 
   const Tasks({
@@ -811,7 +814,9 @@ class Tasks extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(task.task),
+                    Text(task.task, style: TextStyle(
+                      decoration: task.isDone ? TextDecoration.lineThrough : TextDecoration.none,
+                    )),
                     Text(
                       DateFormat("HH:mm").format(task.scheduleAt),
                       style: TextStyle(
@@ -822,8 +827,9 @@ class Tasks extends StatelessWidget {
                   ]
                 ),
                 leading: Checkbox(
-                  value: true,
-                  onChanged: (bool? newValue) {
+                  value: task.isDone,
+                  onChanged: (bool? value) {
+                    toogleTaskStatus(task.id);
                   },
                   activeColor: Colors.black,  // Warna ketika checked
                   checkColor: Colors.white,  // Warna icon check saat checked

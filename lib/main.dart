@@ -31,7 +31,6 @@ class _MainState extends State<Main> {
   // final List<String> data = <String>['A', 'B', 'C', 'D', 'E', 'F', 'G'];
   final List<Task> tasks = [];
 
-  // void _addTask(String task, {DateTime? scheduleAt: }){
   void addTask(String id, TextEditingController textFieldController, DateTime scheduleAt){
     if(textFieldController.text.isNotEmpty){
       setState((){
@@ -40,6 +39,15 @@ class _MainState extends State<Main> {
     }
 
     textFieldController.clear();
+  }
+
+  void editTask(Task updateTask){
+    setState((){
+      final index = tasks.indexWhere((task) => task.id == updateTask.id);
+      if (index != -1) {
+        tasks[index] = updateTask;
+      }
+    });
   }
 
   void removeTask(String id){
@@ -94,6 +102,7 @@ class _MainState extends State<Main> {
         tasks: this.tasks,
         removeTask: this.removeTask,
         toogleTaskStatus: this.toogleTaskStatus,
+        editTask: this.editTask,
         pageController: this.pageController,
         selectedDate: this.selectedDate,
         getWeekStart: this.getWeekStart,
@@ -303,7 +312,9 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
                     onTap: () {
                       final DateTime dateTime = _combineDateAndTime();
                       final id = _generateTaskId();
+
                       widget.addTask(id, textFieldController, dateTime);
+                      Navigator.pop(context);
                     },
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
@@ -320,18 +331,40 @@ class _AddBottomSheetState extends State<AddBottomSheet> {
   }
 }
 
-class UpdateBottomSheet extends StatefulWidget {
-  const UpdateBottomSheet({super.key});
+class EditBottomSheet extends StatefulWidget {
+  final Task task;
+  final void Function(Task) editTask;
+  const EditBottomSheet({super.key, required this.task, required this.editTask});
 
   @override
-  State<UpdateBottomSheet> createState() => _UpdateBottomSheetState();
+  State<EditBottomSheet> createState() => _EditBottomSheetState();
 }
 
-class _UpdateBottomSheetState extends State<UpdateBottomSheet> {
+class _EditBottomSheetState extends State<EditBottomSheet> {
+
+  late TextEditingController textFieldController;
+  DateTime? fromDatePicker;
+  TimeOfDay? fromTimePicker;
   
   @override
   void initState(){
+    textFieldController = TextEditingController(text: widget.task.task);
     super.initState();
+  }
+
+  DateTime _combineDateAndTime() {
+    DateTime? tempDate = fromDatePicker ?? widget.task.scheduleAt;
+    TimeOfDay? tempTime = fromTimePicker ?? TimeOfDay.fromDateTime(widget.task.scheduleAt);
+
+    final combinedDateTime = DateTime(
+      tempDate!.year,
+      tempDate!.month,
+      tempDate!.day,
+      tempTime!.hour,
+      tempTime!.minute,
+    );
+
+    return combinedDateTime!;
   }
 
   @override
@@ -349,8 +382,9 @@ class _UpdateBottomSheetState extends State<UpdateBottomSheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              // controller: widget.textFieldController,
+              controller: textFieldController,
               autofocus: true,
+              cursorColor: Colors.black,
               decoration: const InputDecoration(
                 hintText: 'Enter your task here...',
                 border: InputBorder.none,
@@ -372,7 +406,7 @@ class _UpdateBottomSheetState extends State<UpdateBottomSheet> {
                     final pickedDate = await showDatePicker(
                       context: context,
                       initialEntryMode: DatePickerEntryMode.calendarOnly,
-                      initialDate: DateTime.now(),
+                      initialDate: widget.task.scheduleAt,
                       firstDate: DateTime(2019),
                       lastDate: DateTime(2050),
                       builder: (context, child) {
@@ -397,11 +431,11 @@ class _UpdateBottomSheetState extends State<UpdateBottomSheet> {
                       },
                     );
 
-                    // setState(() {
-                    //   fromDatePicker = pickedDate!;
-                    // });
+                    setState(() {
+                      fromDatePicker = pickedDate!;
+                    });
                   },
-                  child: Text(DateFormat('dd/MM/yyyy').format(DateTime.now())),
+                  child: Text(DateFormat('dd/MM/yyyy').format(fromDatePicker ?? widget.task.scheduleAt)),
                 ),
                 SizedBox(width: 4.0),
                 ElevatedButton(
@@ -418,7 +452,7 @@ class _UpdateBottomSheetState extends State<UpdateBottomSheet> {
                     final pickedTime = await showTimePicker(
                       context: context,
                       initialEntryMode: TimePickerEntryMode.dial,
-                      initialTime: TimeOfDay.now(),
+                      initialTime: TimeOfDay.fromDateTime(widget.task.scheduleAt),
                       builder: (BuildContext context, Widget? child) {
                         return Theme(
                           data: ThemeData(
@@ -440,11 +474,11 @@ class _UpdateBottomSheetState extends State<UpdateBottomSheet> {
                       },
                     );
 
-                    // setState(() {
-                    //   fromTimePicker = pickedTime!;
-                    // });
+                    setState(() {
+                      fromTimePicker = pickedTime!;
+                    });
                   },
-                  child: Text(DateFormat('HH:mm').format( DateTime.now().copyWith(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute))),
+                  child: Text( fromTimePicker != null ? DateFormat('HH:mm').format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, fromTimePicker!.hour, fromTimePicker!.minute)) : DateFormat('HH:mm').format(widget.task.scheduleAt))
                 ),
                 Spacer(),
                 Material(
@@ -453,10 +487,15 @@ class _UpdateBottomSheetState extends State<UpdateBottomSheet> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(8.0),
                     onTap: () {
-                      // final DateTime dateTime = _combineDateAndTime();
-                      // widget.addTask(dateTime);
-                      // fromDatePicker = null;
-                      // fromTimePicker = null;
+                      final DateTime dateTime = _combineDateAndTime();
+
+                      widget.task.scheduleAt = dateTime;
+                      if(textFieldController.text.isNotEmpty){
+                        widget.task.task = textFieldController.text;
+                      }
+
+                      widget.editTask(widget.task);
+                      Navigator.pop(context);
                     },
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
@@ -639,6 +678,7 @@ class Wrapper extends StatelessWidget {
   final List<Task> tasks;
   final void Function(String) removeTask;
   final void Function(int) toogleTaskStatus;
+  final void Function(Task) editTask;
 
   final pageController;
   final selectedDate;
@@ -652,6 +692,7 @@ class Wrapper extends StatelessWidget {
     required this.tasks,
     required this.removeTask,
     required this.toogleTaskStatus,
+    required this.editTask,
     required this.pageController,
     required this.selectedDate,
     required this.getWeekStart,
@@ -689,6 +730,7 @@ class Wrapper extends StatelessWidget {
                     removeTask: this.removeTask,
                     toogleTaskStatus: this.toogleTaskStatus,
                     selectedDate: this.selectedDate,
+                    editTask: this.editTask,
                   )
                 )
               )
@@ -714,6 +756,7 @@ class Tasks extends StatelessWidget {
   final DateTime selectedDate;
   final void Function(String) removeTask;
   final void Function(int) toogleTaskStatus;
+  final void Function(Task) editTask;
 
   const Tasks({
     super.key,
@@ -721,6 +764,7 @@ class Tasks extends StatelessWidget {
     required this.removeTask,
     required this.toogleTaskStatus,
     required this.selectedDate,
+    required this.editTask,
   });
 
   @override
@@ -805,11 +849,11 @@ class Tasks extends StatelessWidget {
                             ), // Sudut melengkung
                           ),
                           context: context,
-                          builder: (context) => UpdateBottomSheet(),
-                          ).whenComplete((){
-                          // fromDatePicker = null;
-                          // fromTimePicker = null;
-                        });
+                          builder: (context) => EditBottomSheet(
+                            task: task,
+                            editTask: this.editTask,
+                          ),
+                        );
                       }
                     ),
                     IconButton(

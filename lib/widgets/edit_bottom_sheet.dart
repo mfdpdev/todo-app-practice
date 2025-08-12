@@ -42,6 +42,11 @@ class _EditBottomSheetState extends State<EditBottomSheet> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context){
     return Padding(
       padding: EdgeInsets.only(

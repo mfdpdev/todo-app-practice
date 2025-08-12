@@ -14,9 +14,7 @@ class Wrapper extends StatelessWidget {
 
   final pageController;
   final selectedDate;
-  final DateTime Function(int) getWeekStart;
   final void Function(DateTime) onDateSelected;
-  final List<DateTime> Function(DateTime) getWeekDates;
   final void Function(int) changeCurrentPage;
 
   const Wrapper({
@@ -27,9 +25,7 @@ class Wrapper extends StatelessWidget {
     required this.editTask,
     required this.pageController,
     required this.selectedDate,
-    required this.getWeekStart,
     required this.onDateSelected,
-    required this.getWeekDates,
     required this.changeCurrentPage,
   });
   
@@ -48,9 +44,7 @@ class Wrapper extends StatelessWidget {
                 child: WeeklyCalendar(
                   pageController: this.pageController,
                   selectedDate: this.selectedDate,
-                  getWeekStart: this.getWeekStart,
                   onDateSelected: this.onDateSelected,
-                  getWeekDates: this.getWeekDates,
                   changeCurrentPage: this.changeCurrentPage,
                 ),
               ),

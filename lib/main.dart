@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+// import 'dart:convert';
+// import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:todo_app_practice/widgets/wrapper.dart';
 import 'package:todo_app_practice/widgets/add_bottom_sheet.dart';
 import 'package:todo_app_practice/models/task.dart';
@@ -29,8 +33,25 @@ class Main extends StatefulWidget {
 
 class _MainState extends State<Main> {
 
-  // final List<String> data = <String>['A', 'B', 'C', 'D', 'E', 'F', 'G'];
   final List<Task> tasks = [];
+
+  // Future<void> saveTasks() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String encodedData = jsonEncode(tasks);
+  //   await prefs.setString('tasks', encodedData);
+  // }
+  //
+  // Future<void> loadTasks() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? saveTasks = prefs.getString('tasks');
+  //
+  //   if (saveTasks != null){
+  //     List<Task> decodedData = List<Task>.from(jsonDecode(saveTasks));
+  //     setState((){
+  //       tasks = decodedData;
+  //     });
+  //   }
+  // }
 
   void addTask(String id, TextEditingController textFieldController, DateTime scheduleAt){
     if(textFieldController.text.isNotEmpty){
@@ -71,21 +92,10 @@ class _MainState extends State<Main> {
   int currentPage = 1000;
   DateTime selectedDate = DateTime.now();
 
-  DateTime getWeekStart(int weekOffset) {
-    final now = DateTime.now();
-    final weekday = now.weekday;
-    final monday = now.subtract(Duration(days: weekday - 1));
-    return monday.add(Duration(days: 7 * weekOffset));
-  }
-
   void onDateSelected(DateTime date){
     setState((){
       selectedDate = date;
     });
-  }
-
-  List<DateTime> getWeekDates(DateTime startOfWeek) {
-    return List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
   }
 
   void changeCurrentPage(int index){
@@ -109,9 +119,7 @@ class _MainState extends State<Main> {
         editTask: this.editTask,
         pageController: this.pageController,
         selectedDate: this.selectedDate,
-        getWeekStart: this.getWeekStart,
         onDateSelected: this.onDateSelected,
-        getWeekDates: this.getWeekDates,
         changeCurrentPage: this.changeCurrentPage,
       ),
       bottomNavigationBar: BottomAppBar(

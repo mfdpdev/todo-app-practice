@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import './../utils/date_utils.dart' show getWeekDates, getWeekStart, isSameDate;
 
 class WeeklyCalendar extends StatelessWidget {
 
   final pageController;
   final selectedDate;
-  final DateTime Function(int) getWeekStart;
   final void Function(DateTime) onDateSelected;
-  final List<DateTime> Function(DateTime) getWeekDates;
   final void Function(int) changeCurrentPage;
 
   const WeeklyCalendar({
     super.key,
     required this.pageController,
     required this.selectedDate,
-    required this.getWeekStart,
     required this.onDateSelected,
-    required this.getWeekDates,
     required this.changeCurrentPage,
   });
 
@@ -55,8 +52,8 @@ class WeeklyCalendar extends StatelessWidget {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: weekDates.map((date) {
-                  final isToday = _isSameDate(date, DateTime.now());
-                  final isSelected = _isSameDate(date, selectedDate);
+                  final isToday = isSameDate(date, DateTime.now());
+                  final isSelected = isSameDate(date, selectedDate);
 
                   return GestureDetector(
                     onTap: () {
@@ -109,9 +106,5 @@ class WeeklyCalendar extends StatelessWidget {
         ),
       ]
     );
-  }
-
-  bool _isSameDate(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

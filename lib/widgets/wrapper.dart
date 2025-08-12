@@ -65,6 +65,9 @@ class Wrapper extends StatelessWidget {
                     editTask: this.editTask,
                   )
                 )
+              ),
+              SizedBox(
+                height: 35
               )
             ]
           )

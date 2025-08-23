@@ -44,8 +44,8 @@ cd todo-app-practice
 * Local storage support (Coming soon).
 
 ## Screenshots
-<img src="/docs/flutter_01.png" width="200" hspace="10" vspace="10">
-<img src="/docs/flutter_02.png" width="200" hspace="10" vspace="10">
+<img src="/docs/flutter_01.png" align="left" width="200" hspace="10" vspace="10">
+<img src="/docs/flutter_02.png" align="center" width="200" hspace="10" vspace="10">
 
 ## Permissions
 This app dose not require any special permissions.

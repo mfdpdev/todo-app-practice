@@ -14,3 +14,7 @@ DateTime getWeekStart(int weekOffset) {
   final monday = now.subtract(Duration(days: weekday - 1));
   return monday.add(Duration(days: 7 * weekOffset));
 }
+
+DateTime getWeekStartFromDate(DateTime date){
+  return date.subtract(Duration(days: date.weekday - 1));
+}

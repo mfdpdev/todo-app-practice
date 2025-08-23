@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import './../utils/date_utils.dart' show getWeekDates, getWeekStart, isSameDate;
+import './../utils/date_utils.dart'
+    show getWeekDates, getWeekStart, isSameDate, getWeekStartFromDate;
 
-class WeeklyCalendar extends StatelessWidget {
-
-  final pageController;
-  final selectedDate;
+class WeeklyCalendar extends StatefulWidget {
+  final PageController pageController;
+  final DateTime selectedDate;
   final void Function(DateTime) onDateSelected;
   final void Function(int) changeCurrentPage;
 
@@ -18,60 +18,94 @@ class WeeklyCalendar extends StatelessWidget {
   });
 
   @override
+  State<WeeklyCalendar> createState() => _WeeklyCalendarState();
+}
+
+class _WeeklyCalendarState extends State<WeeklyCalendar> {
+  // Gunakan variabel ini untuk melacak tanggal yang akan digunakan untuk label bulan
+  late DateTime _displayedDateForLabel;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi awal dengan tanggal yang dipilih
+    _displayedDateForLabel = widget.selectedDate;
+  }
+
+  // Metode untuk memperbarui label bulan saat PageView digeser
+  void _handlePageChanged(int index) {
+    final newWeekStart = getWeekStart(index - 1000);
+    setState(() {
+      _displayedDateForLabel = newWeekStart;
+    });
+    widget.changeCurrentPage(index);
+  }
+
+  // Saat widget diperbarui dari parent
+  @override
+  void didUpdateWidget(covariant WeeklyCalendar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Perbarui _displayedDateForLabel jika selectedDate berubah
+    if (!isSameDate(widget.selectedDate, oldWidget.selectedDate)) {
+      setState(() {
+        _displayedDateForLabel = widget.selectedDate;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         Padding(
-          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            DateFormat('MMM yyyy').format(selectedDate),
-            style: TextStyle(
+            // Menggunakan _displayedDateForLabel untuk label bulan
+            DateFormat('MMM yyyy').format(_displayedDateForLabel),
+            style: const TextStyle(
               fontSize: 18,
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         SizedBox(
           height: 80,
-          // width: double.infinity,
           child: PageView.builder(
-            controller: pageController,
-            onPageChanged: (int index) {
-              changeCurrentPage(index);
-            },
+            controller: widget.pageController,
+            onPageChanged: _handlePageChanged,
             itemBuilder: (context, index) {
               final weekStart = getWeekStart(index - 1000);
               final weekDates = getWeekDates(weekStart);
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: weekDates.map((date) {
-                  final isToday = isSameDate(date, DateTime.now());
-                  final isSelected = isSameDate(date, selectedDate);
+                  final isSelected = isSameDate(date, widget.selectedDate);
 
                   return GestureDetector(
                     onTap: () {
-                      onDateSelected(date);
+                      // Panggil onDateSelected, label akan di-update oleh didUpdateWidget
+                      widget.onDateSelected(date);
                     },
                     child: Column(
                       children: [
                         Text(
                           DateFormat('E').format(date).substring(0, 1),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.grey,
-                          )
+                          ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Container(
                           height: 40,
                           width: 40,
-                          padding: EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.all(4.0),
                           decoration: BoxDecoration(
                             shape: BoxShape.rectangle,
                             color: isSelected ? Colors.black : Colors.white,
@@ -79,32 +113,32 @@ class WeeklyCalendar extends StatelessWidget {
                             border: Border.all(
                               color: Colors.black,
                               width: 1,
-                            )
+                            ),
                           ),
                           child: Center(
                             child: Text(
                               date.day.toString(),
                               style: TextStyle(
                                 color: isSelected ? Colors.white : Colors.black,
-                              )
-                            )
-                          )
+                              ),
+                            ),
+                          ),
                         )
-                      ]
-                    )
+                      ],
+                    ),
                   );
                 }).toList(),
               );
-            }
-          ) 
+            },
+          ),
         ),
         Container(
-          height: 1,               // lebar garis
-          width: double.infinity,             // tinggi garis
-          color: Colors.grey,     // warna garis
-          margin: EdgeInsets.symmetric(horizontal: 8),
+          height: 1,
+          width: double.infinity,
+          color: Colors.grey,
+          margin: const EdgeInsets.symmetric(horizontal: 8),
         ),
-      ]
+      ],
     );
   }
 }
